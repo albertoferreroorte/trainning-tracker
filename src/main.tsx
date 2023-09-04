@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { StudentsPage } from './student/components/students-page';
+import { StudentsPage } from './student/components';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
