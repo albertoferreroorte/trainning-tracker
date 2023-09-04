@@ -4,7 +4,7 @@ interface FormState {
   [key: string]: string;
 }
 
-export const useForm = ( initialForm: FormState ) => {
+export const useForm = ( initialForm: FormState = {} ) => {
   const [formState, setFormState] = useState<FormState>(initialForm);
   
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
