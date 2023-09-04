@@ -5,7 +5,7 @@ const initialForm = {
   jobPosition: '',
 };
 
-export const StudentForm: React.FC<{onAddStudent: (name: string, position: string) => void}> = (props) => {
+export const StudentForm: React.FC<{onAddStudent: (name: string, position: string) => void}> = ({ onAddStudent }) => {
 
   const { formState, onInputChange } = useForm(initialForm);
 
@@ -14,7 +14,7 @@ export const StudentForm: React.FC<{onAddStudent: (name: string, position: strin
 
     if (formState.fullName.trim().length === 0) return;
 
-    props.onAddStudent(formState.fullName, formState.jobPosition);
+    onAddStudent(formState.fullName, formState.jobPosition);
   }
 
   return (

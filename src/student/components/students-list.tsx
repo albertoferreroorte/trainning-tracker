@@ -1,11 +1,11 @@
 import { Student } from '../entities/student';
 import { StudentCard } from './student-card';
 
-export const StudentsList: React.FC<{ students: Student[] }> = (props) => {
+export const StudentsList: React.FC<{ students: Student[] }> = ({ students }) => {
   return (
     <ul>
       {
-        props.students.map(student => (
+        students.map(student => (
           <StudentCard  key={ student.id } student={ student } />
         ))
       }
