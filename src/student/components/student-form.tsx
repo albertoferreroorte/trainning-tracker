@@ -18,7 +18,7 @@ export const StudentForm: React.FC<{onAddStudent: (name: string, position: strin
   }
 
   return (
-    <form onSubmit={ submitHandler }>
+    <form aria-label="form" onSubmit={ submitHandler }>
       <div>
         <label>Student name</label>
         <input
