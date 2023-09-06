@@ -1,18 +1,19 @@
 import Grid from '@mui/material/Grid';
 import { useState } from 'react';
+import { StudentFormData } from '../entities';
 import { Student } from '../entities/student';
 import { StudentForm } from './student-form';
 import { StudentsList } from './students-list';
 
-const initialForm: Record<string, string> = {
-  fullName: 'Full name',
-  jobPosition: 'Job position',
+const initialForm: StudentFormData = {
+  fullName: '',
+  jobPosition: '',
 };
 
 export const StudentsPage: React.FC = () => {
   const [ students, setStudents ] = useState<Student[]>([]);
-  const onAddStudentHandler = (data: Record<string, string>) => {
-    const newStudent = new Student(data.fullName, data.jobPosition);
+  const onAddStudentHandler = (name: string, position: string) => {
+    const newStudent = new Student(name, position);
     setStudents(students => students.concat(newStudent));
   }
   return (

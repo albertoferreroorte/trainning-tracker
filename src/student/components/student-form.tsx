@@ -1,45 +1,44 @@
 import { Button, TextField } from '@mui/material';
 import { useForm } from '../../shared/hooks';
+import { StudentFormData } from '../entities';
 
-interface StudentFormProps<T> {
-  initialForm: T;
-  onAddStudent: (data: T) => void;
-}
+export const StudentForm: React.FC<{
+  initialForm: StudentFormData,
+  onAddStudent: (name: string, position: string) => void,
+}> = ({ initialForm, onAddStudent }) => {
 
-export const StudentForm = <T extends Record<string, string>>({
-  initialForm,
-  onAddStudent,
-}: StudentFormProps<T>) => {
-
-  const { formData, onInputChange } = useForm(initialForm);
+  const { formState: { fullName = '', jobPosition = '' }, onInputChange } = useForm(initialForm);
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (Object.values(formData).some((value) => value.trim().length === 0)) {
-      return;
-    }
+    if (fullName.trim().length === 0) return;
 
-    onAddStudent(formData as T);
+    onAddStudent(fullName, jobPosition);
   }
 
   return (
     <form aria-label="form" onSubmit={ submitHandler }>
-      {
-        Object.entries(initialForm).map(([fieldName, fieldLabel]) => (
-          <TextField
-            key={fieldName}
-            fullWidth
-            label={fieldLabel}
-            margin="normal"
-            name={fieldName}
-            placeholder={`Student ${fieldLabel}`}
-            variant="outlined"
-            value={formData[fieldName]}
-            onChange={onInputChange}
-          />
-        ))
-      }
+      <TextField
+        fullWidth
+        label='Student name'
+        margin='normal'
+        name='fullName'
+        placeholder='Student full name'
+        value={ fullName }
+        variant='outlined'
+        onChange={ onInputChange }
+      />
+      <TextField
+        fullWidth
+        label='Job position'
+        margin='normal'
+        name='jobPosition'
+        placeholder='Student Job position'
+        value={ jobPosition }
+        variant='outlined'
+        onChange={ onInputChange }
+      />
       <Button
         type='submit'
         variant='outlined'
