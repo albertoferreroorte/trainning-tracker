@@ -1,45 +1,52 @@
+import { Button, TextField } from '@mui/material';
 import { useForm } from '../../shared/hooks';
 
-const initialForm = {
-  fullName: '',
-  jobPosition: '',
-};
+interface StudentFormProps<T> {
+  initialForm: T;
+  onAddStudent: (data: T) => void;
+}
 
-export const StudentForm: React.FC<{onAddStudent: (name: string, position: string) => void}> = ({ onAddStudent }) => {
+export const StudentForm = <T extends Record<string, string>>({
+  initialForm,
+  onAddStudent,
+}: StudentFormProps<T>) => {
 
-  const { formState, onInputChange } = useForm(initialForm);
+  const { formData, onInputChange } = useForm(initialForm);
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (formState.fullName.trim().length === 0) return;
+    if (Object.values(formData).some((value) => value.trim().length === 0)) {
+      return;
+    }
 
-    onAddStudent(formState.fullName, formState.jobPosition);
+    onAddStudent(formData as T);
   }
 
   return (
     <form aria-label="form" onSubmit={ submitHandler }>
-      <div>
-        <label>Student name</label>
-        <input
-          placeholder='Your Student name'
-          type='text'
-          name='fullName'
-          value={ formState.fullName }
-          onChange={ onInputChange }
-        />
-      </div>
-      <div>
-        <label>Job position</label>
-        <input
-          placeholder='Your Job position'
-          type='text'
-          name='jobPosition'
-          value={ formState.jobPosition }
-          onChange={ onInputChange }
-        />
-      </div>
-      <button type='submit'>Add student</button>
+      {
+        Object.entries(initialForm).map(([fieldName, fieldLabel]) => (
+          <TextField
+            key={fieldName}
+            fullWidth
+            label={fieldLabel}
+            margin="normal"
+            name={fieldName}
+            placeholder={`Student ${fieldLabel}`}
+            variant="outlined"
+            value={formData[fieldName]}
+            onChange={onInputChange}
+          />
+        ))
+      }
+      <Button
+        type='submit'
+        variant='outlined'
+        sx={{ my: 3 }}
+      >
+        Create
+      </Button>
     </form>
   );
 }
