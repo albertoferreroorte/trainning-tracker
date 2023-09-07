@@ -1,11 +1,12 @@
 import { ReactNode, useReducer } from 'react';
+import { Student } from '../entities';
 import { StudentContext } from './student-context';
 import { studentReducer } from './student-reducer';
 import { StudentContextType } from './student-type';
 
 const init = () => {
   return {
-    selectedStudent: '',
+    selectedStudent: {},
   }
 }
 
@@ -13,10 +14,10 @@ export const StudentProvider: React.FC<{ children?: ReactNode }> = ({ children }
 
   const [ studentState, dispatch ] = useReducer(studentReducer, {}, init);
 
-  const selectStudent = ( id = '' ) => {
+  const selectStudent = ( student = {} as Student ) => {
     const action = {
       type: 'Student/Select Student',
-      payload: id,
+      payload: student,
     };
     dispatch(action);
   }

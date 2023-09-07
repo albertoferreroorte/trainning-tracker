@@ -1,4 +1,6 @@
+import { Student } from '../entities';
+
 export interface StudentContextType {
-  selectedStudent: string;
-  selectStudent: (studentId: string) => void;
+  selectedStudent: Student;
+  selectStudent: (student: Student) => void;
 }

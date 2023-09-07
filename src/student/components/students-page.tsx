@@ -24,7 +24,7 @@ export const StudentsPage: React.FC = () => {
   }
   return (
     <ColumnLayout>
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: { md: 3 } }}>
         <Typography variant="h2" component='h4'>Create student</Typography>
         <Divider />
         <StudentForm
@@ -33,7 +33,7 @@ export const StudentsPage: React.FC = () => {
         />
       </Box>
       <ColumnLayout>
-        <Box sx={{ p: 3, mb: 3 }}>
+        <Box sx={{ p: { md: 3 }, mb: 3 }}>
           <Typography
             component='h3'
             variant="h2"
@@ -53,10 +53,10 @@ export const StudentsPage: React.FC = () => {
           }
         </Box>
         {
-          selectedStudent ? (
+          selectedStudent.id ? (
             <ColumnLayout>
               <Box sx={{ flexGrow: 1, p: 5 }}>
-                <Typography variant="h2" component='h4'>{ selectedStudent }</Typography>
+                <Typography variant="h2" component='h4'>{ selectedStudent.fullName }</Typography>
               </Box>
             </ColumnLayout>
           ) : ''

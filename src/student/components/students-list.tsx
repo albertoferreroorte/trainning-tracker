@@ -1,44 +1,55 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material';
+import { useState } from 'react';
 import { StudentContextType, useStudentContext } from '../context';
 import { Student } from '../entities/student';
 
-const columns = [
-  'Student', 'Job position',
-];
-
 export const StudentsList: React.FC<{ students: Student[] }> = ({ students }) => {
   const { selectedStudent, selectStudent }: StudentContextType = useStudentContext();
-  const handleClick = (_e: React.MouseEvent<unknown>, student: string) => {
-    selectStudent(student);
+
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [orderBy, setOrderBy] = useState<string>('fullName'); // Default sorting column
+
+  const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
+    const student = students.find(s => s.id === id);
+    if (student) selectStudent(student);
   };
-  const isSelected = (name: string) => selectedStudent.indexOf(name) !== -1;
+  const isSelected = (name: string) => selectedStudent.id?.indexOf(name) !== -1;
+
+  const handleRequestSort = (property: string) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const sortedStudents = students.slice().sort((a, b) => {
+    const isAsc = order === 'asc';
+    if (orderBy === 'fullName') {
+      return isAsc ? a.fullName.localeCompare(b.fullName) : b.fullName.localeCompare(a.fullName);
+    }
+    return 0;
+  });
+
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            {/* {
-              columns.map(column => (
-                <TableCell
-                  key={column}
-                >
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}
-                  >
-                    column
-                  </TableSortLabel>
-                </TableCell>
-              ))
-            } */}
-            <TableCell>Student</TableCell>
+            <TableCell>
+              <TableSortLabel
+                active={orderBy === 'fullName'}
+                direction={order}
+                onClick={() => handleRequestSort('fullName')}
+              >
+                Student
+              </TableSortLabel>
+            </TableCell>
             <TableCell>Job position</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {
-            students.map((student) => {
+            sortedStudents.map((student) => {
               const isItemSelected = isSelected(student.id);
               return (
                 <TableRow
