@@ -1,5 +1,8 @@
+import { Divider, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { useState } from 'react';
+import { ColumnLayout } from '../../shared/layout/column-layout';
 import { StudentFormData } from '../entities';
 import { Student } from '../entities/student';
 import { StudentForm } from './student-form';
@@ -17,20 +20,44 @@ export const StudentsPage: React.FC = () => {
     setStudents(students => students.concat(newStudent));
   }
   return (
-    <Grid
-      container
-      justifyContent='space-around'
-      sx={{ padding: 10 }}
+    <ColumnLayout
+      fullWidthChildren={
+        <Box
+          sx={{
+            maxWidth: 1280,
+          }}
+        >
+          <Typography
+            component='h3'
+            variant="h2"
+            sx={{ my: 3 }}
+          >
+            {
+              !students.length ? (
+                <Box sx={{ mr: 3, opacity: 0.75 }}>No</Box>
+              ) : ''
+            }
+            Students
+          </Typography>
+          {
+            students.length ? (
+              <StudentsList students={ students } />
+            ) : ''
+          }
+        </Box>
+      }
     >
-      <Grid item>
+      <Grid
+        container
+        sx={{ width: '100%' }}
+      >
+        <Typography variant="h2" component='h4'>Create student</Typography>
+        <Divider />
         <StudentForm
           initialForm={ initialForm }
           onAddStudent={ onAddStudentHandler }
         />
       </Grid>
-      <Grid item>
-        <StudentsList students={ students } />
-      </Grid>
-    </Grid>
+    </ColumnLayout>
   );
 }
