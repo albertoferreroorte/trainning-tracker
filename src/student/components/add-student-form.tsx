@@ -2,7 +2,7 @@ import { Button, Grid, TextField } from '@mui/material';
 import { useForm } from '../../shared/hooks';
 import { StudentFormData } from '../entities';
 
-export const StudentForm: React.FC<{
+export const AddStudentForm: React.FC<{
   initialForm: StudentFormData,
   onAddStudent: (name: string, position: string) => void,
 }> = ({ initialForm, onAddStudent }) => {

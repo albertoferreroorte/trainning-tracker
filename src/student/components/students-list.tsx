@@ -7,7 +7,7 @@ export const StudentsList: React.FC<{ students: Student[] }> = ({ students }) =>
   const { selectedStudent, selectStudent }: StudentContextType = useStudentContext();
 
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<string>('fullName'); // Default sorting column
+  const [orderBy, setOrderBy] = useState<string>('fullName');
 
   const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
     const student = students.find(s => s.id === id);
@@ -29,20 +29,23 @@ export const StudentsList: React.FC<{ students: Student[] }> = ({ students }) =>
     return 0;
   });
 
-
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table sx={{ minWidth: 650 }} aria-label="students list table">
         <TableHead>
           <TableRow>
             <TableCell>
-              <TableSortLabel
-                active={orderBy === 'fullName'}
-                direction={order}
-                onClick={() => handleRequestSort('fullName')}
-              >
-                Student
-              </TableSortLabel>
+              {
+                sortedStudents.length > 1
+                  ? (<TableSortLabel
+                    active={orderBy === 'fullName'}
+                    direction={order}
+                    onClick={() => handleRequestSort('fullName')}
+                  >
+                    Student
+                  </TableSortLabel>)
+                  : ( 'Student' )
+              }
             </TableCell>
             <TableCell>Job position</TableCell>
           </TableRow>

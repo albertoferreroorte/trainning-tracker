@@ -1,10 +1,10 @@
-import { Box, Divider, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import { ColumnLayout } from '../../shared/layout/column-layout';
 import { StudentContextType, useStudentContext } from '../context';
 import { StudentFormData } from '../entities';
 import { Student } from '../entities/student';
-import { StudentForm } from './student-form';
+import { AddStudentForm } from './add-student-form';
 import { StudentsList } from './students-list';
 
 const initialForm: StudentFormData = {
@@ -24,10 +24,9 @@ export const StudentsPage: React.FC = () => {
   }
   return (
     <ColumnLayout>
-      <Box sx={{ p: { md: 3 } }}>
+      <Box sx={{ p: { md: 3 }, mt: 1 }}>
         <Typography variant="h2" component='h4'>Create student</Typography>
-        <Divider />
-        <StudentForm
+        <AddStudentForm
           initialForm={ initialForm }
           onAddStudent={ onAddStudentHandler }
         />

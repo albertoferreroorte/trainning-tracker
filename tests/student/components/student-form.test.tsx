@@ -21,7 +21,7 @@ describe('Tests for <StudentForm />', () => {
       onInputChange: () => {},
     });
     render(
-      <StudentForm onAddStudent={ onAddStudentMock } />
+      <StudentForm initialForm={ formData } onAddStudent={ onAddStudentMock } />
     );
     const form = screen.getByRole('form');
     fireEvent.submit(form);
@@ -38,7 +38,7 @@ describe('Tests for <StudentForm />', () => {
       onInputChange: () => {},
     });
     render(
-      <StudentForm onAddStudent={ onAddStudentMock } />
+      <StudentForm initialForm={ formData } onAddStudent={ onAddStudentMock } />
     );
     const form = screen.getByRole('form');
     fireEvent.submit(form);
