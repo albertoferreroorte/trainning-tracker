@@ -5,6 +5,7 @@ import { addNewEmptyStudentWithNamePosition } from '../../store';
 import { StudentFormData } from '../entities';
 import { Student } from '../entities/student';
 import { AddStudentForm } from './add-student-form';
+import { StudentView } from './student-view';
 import { StudentsList } from './students-list';
 
 const initialForm: StudentFormData = {
@@ -56,8 +57,8 @@ export const StudentsPage: React.FC = () => {
         {
           selected?.id ? (
             <ColumnLayout>
-              <Box sx={{ flexGrow: 1, p: 5 }}>
-                <Typography variant="h2" component='h4'>{ selected.fullName }</Typography>
+              <Box sx={{ flexGrow: 1, p: { sm: '100px'}, maxWidth: 800, width: 'calc( 100% - 200px)' }}>
+                <StudentView { ...selected } />
               </Box>
             </ColumnLayout>
           ) : ''
