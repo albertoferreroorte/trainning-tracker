@@ -1,23 +1,51 @@
 import { PersonOutline } from '@mui/icons-material';
-import { Button, Grid, TextField } from '@mui/material';
+import { Button, FormControl, Grid, InputLabel, NativeSelect, TextField } from '@mui/material';
+import { useEffect } from 'react';
+import { Course, Lesson } from '../../course';
 import { useAppSelector, useForm } from '../../shared/hooks';
 import { Student } from '../entities';
 
 export const EditStudentForm: React.FC<{
   onEditStudent: (student: Partial<Student>) => void,
-}> = ({ onEditStudent }) => {
+  onSelectCourse: (course: Course) => void,
+  onSelectLesson: (lesson: Lesson) => void,
+}> = ({ onEditStudent, onSelectCourse, onSelectLesson }) => {
 
   const { selected } = useAppSelector(state => state.student);
 
-  const initialForm = { fullName: selected?.fullName, jobPosition: selected?.jobPosition };
+  const { courses, selectedCourse, selectedLesson } = useAppSelector(state => state.course);
 
-  const { formState, onInputChange } = useForm(initialForm);
+  const { formState, onInputChange, setFormState } = useForm({ ...selected });
+
+  useEffect(() => {
+    if (selected) {
+      setFormState({
+        fullName: selected.fullName || '',
+        jobPosition: selected.jobPosition || '',
+      });
+    }
+  }, [setFormState, selected]);
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (formState.fullName?.trim().length === 0) return;
-    onEditStudent({ fullName: formState.fullName, jobPosition: formState.jobPosition });
+    if (formState.fullName?.trim().length === 0 || !selectedCourse) return;
+    
+    onEditStudent({ courses: [selectedCourse], fullName: formState.fullName, jobPosition: formState.jobPosition });
+  }
+
+  const handleSelectCourse = (event: React.FormEvent) => {
+    event.preventDefault();
+    const course = courses.find(c => c.id.toLocaleString() === (event.target as HTMLInputElement).value);
+    if (!course) return;
+    onSelectCourse(course);
+  }
+
+  const handleSelectLesson = (event: React.FormEvent) => {
+    event.preventDefault();
+    const lesson = selectedCourse?.lessons.find(c => c.id.toLocaleString() === (event.target as HTMLInputElement).value);
+    if (!lesson) return;
+    onSelectLesson(lesson);
   }
 
   return (
@@ -29,7 +57,7 @@ export const EditStudentForm: React.FC<{
           margin='normal'
           name='fullName'
           required
-          value={ selected?.fullName }
+          value={ formState.fullName }
           variant='outlined'
           onChange={ onInputChange }
         />
@@ -38,10 +66,54 @@ export const EditStudentForm: React.FC<{
           label='Job position'
           margin='normal'
           name='jobPosition'
-          value={ selected?.jobPosition }
+          value={ formState.jobPosition }
           variant='outlined'
           onChange={ onInputChange }
         />
+        <FormControl fullWidth sx={{ my: 3 }}>
+          <InputLabel variant="standard" htmlFor="uncontrolled-native">
+            Course
+          </InputLabel>
+          <NativeSelect
+            name='selectedCourse'
+            value={ selectedCourse?.id }
+            inputProps={{
+              name: 'course',
+              id: 'uncontrolled-native',
+            }}
+            onChange={ handleSelectCourse }
+          >
+            {
+              courses.map(course => (
+                <option key={course.id} value={course.id}>{ course.name }</option>
+              ))
+            }
+          </NativeSelect>
+        </FormControl>
+        {
+          selectedCourse && (
+            <FormControl fullWidth sx={{ ml: 3, my: 1 }}>
+              <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                Lesson
+              </InputLabel>
+              <NativeSelect
+                name='selectedLesson'
+                defaultValue={ selectedLesson?.id }
+                inputProps={{
+                  name: 'lesson',
+                  id: 'uncontrolled-native',
+                }}
+                onChange={ handleSelectLesson }
+              >
+                {
+                  selectedCourse.lessons.map(lesson => (
+                    <option key={lesson.id} value={lesson.id}>{ lesson.title }</option>
+                  ))
+                }
+              </NativeSelect>
+            </FormControl>
+          )
+        }
         <Button
           aria-label="delete"
           color="primary"

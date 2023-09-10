@@ -1,16 +1,19 @@
-import { Card, CardContent, CardHeader, Button } from '@mui/material';
+import { Card, CardContent, CardHeader, Button, Typography } from '@mui/material';
 import { PersonOutline } from '@mui/icons-material';
 import { EditStudentForm } from './edit-student-form';
 import { Student } from '../entities';
+import { Course, Lesson } from '../../course';
 
 interface StudentViewProps {
   fullName: string;
   jobPosition: string;
   onDeleteStudent: () => void;
   onSaveStudent: (student: Partial<Student>) => void;
+  onSelectCourse: (course: Course) => void;
+  onSelectLesson: (lesson: Lesson) => void;
 }
 
-export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition, onDeleteStudent, onSaveStudent }) => {
+export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition, onDeleteStudent, onSaveStudent, onSelectCourse, onSelectLesson }) => {
   const handleDeleteClick = () => {
     onDeleteStudent();
   };
@@ -18,6 +21,15 @@ export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition,
   const handleSaveClick = (student: Partial<Student>) => {
     onSaveStudent(student);
   };
+
+  const handleSelectCourse = (course: Course) => {
+    onSelectCourse(course);
+  };
+
+  const handleSelectLesson = (lesson: Lesson) => {
+    onSelectLesson(lesson);
+  };
+
   return (
     <Card sx={{ padding: 7, width: '100%' }}>
       <CardHeader
@@ -32,12 +44,14 @@ export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition,
             Delete student
           </Button>
         }
-        title={ fullName }
+        title={ <Typography variant="h2" component='h4'>{ fullName }</Typography> }
         subheader={ jobPosition }
       />
       <CardContent>
         <EditStudentForm
           onEditStudent={ handleSaveClick }
+          onSelectCourse={ handleSelectCourse }
+          onSelectLesson={ handleSelectLesson }
         />
       </CardContent>
     </Card>

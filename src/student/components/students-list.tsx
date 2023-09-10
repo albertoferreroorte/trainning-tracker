@@ -12,8 +12,9 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
   const [orderBy, setOrderBy] = useState<string>('fullName');
 
   const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
-    const student = students.find(s => s.id === id);
-    if (student) dispatch(selectStudentByEntity(student));
+    const student: Student | undefined = students.find(s => s.id === id);
+    if (!student) return;
+    dispatch(selectStudentByEntity(student));
   };
   const isSelected = (name: string) => selected?.id?.indexOf(name) !== -1;
 
@@ -50,6 +51,7 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
               }
             </TableCell>
             <TableCell>Job position</TableCell>
+            <TableCell>Courses</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -64,9 +66,14 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}
                 >
                   <TableCell component="th" scope="row">
-                    {student.fullName}
+                    { student.fullName }
                   </TableCell>
-                  <TableCell>{student.jobPosition}</TableCell>
+                  <TableCell component="th" scope="row">
+                    {  student.jobPosition }
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    { student.courses?.map(course => course.name) }
+                  </TableCell>
                 </TableRow>
               );
             })

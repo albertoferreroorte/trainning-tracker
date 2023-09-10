@@ -15,5 +15,6 @@ export const useForm = <T>( initialForm: T = {} as T ) => {
     ...formState,
     formState,
     onInputChange,
+    setFormState,
   } 
 }
