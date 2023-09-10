@@ -5,8 +5,7 @@ import { selectStudentByEntity } from '../../store';
 import { Student } from '../entities/student';
 
 export const StudentsList: React.FC<{ students: Student[] }> = () => {
-  const selected = useAppSelector(state => state.student.selected);
-  const students = useAppSelector(state => state.student.students);
+  const { selected, students } = useAppSelector(state => state.student);
   const dispatch = useAppDispatch();
 
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');

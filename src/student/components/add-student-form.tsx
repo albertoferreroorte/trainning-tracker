@@ -2,10 +2,14 @@ import { Button, Grid, TextField } from '@mui/material';
 import { useForm } from '../../shared/hooks';
 import { StudentFormData } from '../entities';
 
+const initialForm: StudentFormData = {
+  fullName: '',
+  jobPosition: '',
+};
+
 export const AddStudentForm: React.FC<{
-  initialForm: StudentFormData,
   onAddStudent: (name: string, position: string) => void,
-}> = ({ initialForm, onAddStudent }) => {
+}> = ({ onAddStudent }) => {
 
   const { formState: { fullName = '', jobPosition = '' }, onInputChange } = useForm(initialForm);
 

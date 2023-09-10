@@ -24,6 +24,17 @@ export const studentSlice = createSlice({
           student => student.id !== action.payload,
         );
       },
+      setStudents: (state, action) => {
+        state.students = action.payload;
+      },
+      updateStudent: (state, action) => {
+        state.students = state.students.map(student => {
+          if (student.id === action.payload.id) {
+            return action.payload;
+          }
+          return student;
+        });
+      },
       selectStudent: (state, action) => {
         state.selected = action.payload;
       }
@@ -32,5 +43,8 @@ export const studentSlice = createSlice({
 
 export const {
   addNewEmptyStudent,
+  deleteStudentById,
   selectStudent,
+  setStudents,
+  updateStudent,
 } = studentSlice.actions;

@@ -1,9 +1,23 @@
-import { Card, CardContent, CardHeader, Button, CardActions } from '@mui/material';
+import { Card, CardContent, CardHeader, Button } from '@mui/material';
 import { PersonOutline } from '@mui/icons-material';
+import { EditStudentForm } from './edit-student-form';
 import { Student } from '../entities';
 
-export const StudentView: React.FC<Partial<Student>> = ({ fullName, jobPosition }) => {
-  const isEdited = false;
+interface StudentViewProps {
+  fullName: string;
+  jobPosition: string;
+  onDeleteStudent: () => void;
+  onSaveStudent: (student: Partial<Student>) => void;
+}
+
+export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition, onDeleteStudent, onSaveStudent }) => {
+  const handleDeleteClick = () => {
+    onDeleteStudent();
+  };
+
+  const handleSaveClick = (student: Partial<Student>) => {
+    onSaveStudent(student);
+  };
   return (
     <Card sx={{ padding: 7, width: '100%' }}>
       <CardHeader
@@ -11,6 +25,7 @@ export const StudentView: React.FC<Partial<Student>> = ({ fullName, jobPosition 
           <Button
             aria-label="delete"
             color="warning"
+            onClick={ handleDeleteClick }
             variant="outlined"
             startIcon={<PersonOutline fontSize='large' sx={{ transform: 'rotate(180deg)' }} />}
           >
@@ -20,20 +35,11 @@ export const StudentView: React.FC<Partial<Student>> = ({ fullName, jobPosition 
         title={ fullName }
         subheader={ jobPosition }
       />
-        <CardContent>
-        
+      <CardContent>
+        <EditStudentForm
+          onEditStudent={ handleSaveClick }
+        />
       </CardContent>
-      <CardActions>
-        <Button
-          aria-label="delete"
-          color="primary"
-          disabled={ !isEdited }
-          variant="outlined"
-          startIcon={<PersonOutline fontSize='large' />}
-          >
-          Save
-        </Button>
-      </CardActions>
     </Card>
   );
 };
