@@ -1,19 +1,22 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material';
 import { useState } from 'react';
-import { StudentContextType, useStudentContext } from '../context';
+import { useAppDispatch, useAppSelector } from '../../shared/hooks';
+import { selectStudentByEntity } from '../../store';
 import { Student } from '../entities/student';
 
-export const StudentsList: React.FC<{ students: Student[] }> = ({ students }) => {
-  const { selectedStudent, selectStudent }: StudentContextType = useStudentContext();
+export const StudentsList: React.FC<{ students: Student[] }> = () => {
+  const selected = useAppSelector(state => state.student.selected);
+  const students = useAppSelector(state => state.student.students);
+  const dispatch = useAppDispatch();
 
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<string>('fullName');
 
   const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
     const student = students.find(s => s.id === id);
-    if (student) selectStudent(student);
+    if (student) dispatch(selectStudentByEntity(student));
   };
-  const isSelected = (name: string) => selectedStudent.id?.indexOf(name) !== -1;
+  const isSelected = (name: string) => selected?.id?.indexOf(name) !== -1;
 
   const handleRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -56,7 +59,7 @@ export const StudentsList: React.FC<{ students: Student[] }> = ({ students }) =>
               const isItemSelected = isSelected(student.id);
               return (
                 <TableRow
-                  key={student.id}
+                  key={`${student.id}${student.fullName}`}
                   onClick={(event) => handleClick(event, student.id)}
                   selected={ isItemSelected }
                   sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}

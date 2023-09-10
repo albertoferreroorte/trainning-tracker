@@ -18,14 +18,14 @@ const tabs = [
 
 export const TrainningTrackerApp = () => {
   const location = useLocation();
-  const [value, setValue] = useState<number | undefined>(0);
+  const [value, setValue] = useState<number>(0);
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   useEffect(() => {
-    const tab = tabs.find(t => t.path === location.pathname);
-    setValue(tab?.value);
+    const tab = tabs.find(t => t.path === location.pathname) || tabs[1];
+    setValue(tab.value);
   }, [location.pathname, value]);
 
   return (

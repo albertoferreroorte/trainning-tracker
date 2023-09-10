@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { ColumnLayout } from '../../shared/layout/column-layout';
-import { StudentContextType, useStudentContext } from '../context';
+import { addNewEmptyStudentWithNamePosition } from '../../store';
 import { StudentFormData } from '../entities';
 import { Student } from '../entities/student';
 import { AddStudentForm } from './add-student-form';
@@ -13,15 +13,17 @@ const initialForm: StudentFormData = {
 };
 
 export const StudentsPage: React.FC = () => {
-  const [ students, setStudents ] = useState<Student[]>([]);
-  const { selectedStudent }: StudentContextType = useStudentContext();
+
+  const selected = useAppSelector(state => state.student.selected);
+  const students = useAppSelector(state => state.student.students);
+  const dispatch = useAppDispatch();
+
   const onAddStudentHandler = (name: string, position: string) => {
-    const newStudent = new Student(name, position);
-    setStudents(students => [
-      ...students,
-      newStudent,
-    ]);
-  }
+    const studentInstance = new Student(name, position);
+    const studentObject = studentInstance.toObject();
+    dispatch(addNewEmptyStudentWithNamePosition(studentObject));
+  };
+
   return (
     <ColumnLayout>
       <Box sx={{ p: { md: 3 }, mt: 1 }}>
@@ -52,10 +54,10 @@ export const StudentsPage: React.FC = () => {
           }
         </Box>
         {
-          selectedStudent.id ? (
+          selected?.id ? (
             <ColumnLayout>
               <Box sx={{ flexGrow: 1, p: 5 }}>
-                <Typography variant="h2" component='h4'>{ selectedStudent.fullName }</Typography>
+                <Typography variant="h2" component='h4'>{ selected.fullName }</Typography>
               </Box>
             </ColumnLayout>
           ) : ''
