@@ -15,6 +15,9 @@ export const studentSlice = createSlice({
     name: 'student',
     initialState,
     reducers: {
+      addCourse: (state, action) => {
+        state.selected?.courses?.push(action.payload);
+      },
       addNewEmptyStudent: (state, action) => {
         state.students.push(action.payload);
       },
@@ -42,6 +45,7 @@ export const studentSlice = createSlice({
 });
 
 export const {
+  addCourse,
   addNewEmptyStudent,
   deleteStudentById,
   selectStudent,

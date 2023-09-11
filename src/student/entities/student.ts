@@ -1,7 +1,7 @@
 import { Course } from "../../course";
 
 export class Student {
-  courses?: Course[];
+  courses?: Course[] | null;
   fullName: string;
   id: string;
   jobPosition: string;

@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material';
 import { Course, Lesson } from '../../course';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { ColumnLayout } from '../../shared/layout/column-layout';
-import { addNewEmptyStudentWithNamePosition, selectStudent, startDeleteStudentById, startSetStudents, startUpdateStudent } from '../../store';
+import { addNewEmptyStudentWithNamePosition, selectStudent, startDeleteStudentById, startSetCourses, startSetStudents, startUpdateStudent } from '../../store';
 import { selectCourse, selectLesson } from '../../store/course/course-slice';
 import { Student } from '../entities/student';
 import { AddStudentForm } from './add-student-form';
@@ -31,22 +31,45 @@ export const StudentsPage: React.FC = () => {
   };
 
   const handleSaveStudent = (student: Partial<Student>) => {
-    const studentEntity = {
-      ...student,
-      courses: [selectedCourse as Course],
-      id: selected?.id,
-    };
-    if (selected) {
-      dispatch( selectStudent(studentEntity) );
-      dispatch( startUpdateStudent(studentEntity) );
-      dispatch( startSetStudents() );
+    if (selected) {      
+      const studentCourses = Array.isArray(student.courses)
+        ? student.courses
+        : [];
+      const isCourseSelected = selectedCourse
+        ? !studentCourses.some((course) => course.id === selectedCourse.id)
+        : false;
+      const updatedCourses = isCourseSelected && selectedCourse
+        ? [...studentCourses, selectedCourse]
+        : studentCourses;
+      const updatedStudentEntity: Partial<Student> = {
+        ...student,
+        courses: updatedCourses,
+        id: selected.id,
+      };
+      const updatedStudents = students.map((studentItem) => {
+        if (studentItem.id === selected.id) {
+          const studentCourses = studentItem.courses || [];
+          const updatedStudentCourses = isCourseSelected && selectedCourse
+            ? [...studentCourses, selectedCourse]
+            : studentCourses;
+          return {
+            ...studentItem,
+            courses: updatedStudentCourses,
+            fullName: student.fullName || studentItem.fullName,
+            jobPosition: student.jobPosition || studentItem.jobPosition,
+          };
+        }
+        return studentItem;
+      });
+      dispatch( selectStudent(updatedStudentEntity) );
+      dispatch( startUpdateStudent(updatedStudentEntity) );
+      dispatch(startSetStudents(updatedStudents));
     }
   };
 
   const handleSelectCourse = (course: Course) => {
-    if (course) {
-      dispatch( selectCourse(course) );
-    }
+    dispatch( selectCourse(course) );
+    dispatch( startSetCourses(course) );
   }
 
   const handleSelectLesson = (lesson: Lesson) => {

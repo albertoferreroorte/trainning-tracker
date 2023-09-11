@@ -1,7 +1,8 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { selectStudentByEntity } from '../../store';
+import { startSelectCourse } from '../../store/course';
 import { Student } from '../entities/student';
 
 export const StudentsList: React.FC<{ students: Student[] }> = () => {
@@ -15,6 +16,7 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
     const student: Student | undefined = students.find(s => s.id === id);
     if (!student) return;
     dispatch(selectStudentByEntity(student));
+    dispatch(startSelectCourse(null));
   };
   const isSelected = (name: string) => selected?.id?.indexOf(name) !== -1;
 
@@ -63,7 +65,7 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
                   key={`${student.id}${student.fullName}`}
                   onClick={(event) => handleClick(event, student.id)}
                   selected={ isItemSelected }
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer', verticalAlign: 'top' }}
                 >
                   <TableCell component="th" scope="row">
                     { student.fullName }
@@ -72,7 +74,9 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
                     { student.jobPosition }
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    { student.courses?.map(course => course?.name) }
+                    { student.courses?.map(
+                      course => <Typography key={ course.id }>{ course.name }</Typography>
+                    )}
                   </TableCell>
                 </TableRow>
               );

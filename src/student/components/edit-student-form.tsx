@@ -78,13 +78,14 @@ export const EditStudentForm: React.FC<{
           </InputLabel>
           <NativeSelect
             name='selectedCourse'
-            value={ selected?.courses?.[0]?.id }
+            value={ selectedCourse?.id }
             inputProps={{
               name: 'course',
               id: 'uncontrolled-native',
             }}
             onChange={ handleSelectCourse }
           >
+            <option value=""></option>
             {
               coursesData.map(course => (
                 <option key={course.id} value={course.id}>{ course.name }</option>
