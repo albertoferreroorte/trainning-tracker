@@ -1,4 +1,4 @@
-export const courses = [
+export const coursesData = [
   {
     "id": 1,
     "name": "Course A",

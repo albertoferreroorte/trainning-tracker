@@ -1,6 +1,7 @@
 import { PersonOutline } from '@mui/icons-material';
 import { Button, FormControl, Grid, InputLabel, NativeSelect, TextField } from '@mui/material';
 import { useEffect } from 'react';
+import { coursesData } from '../../assets/courses';
 import { Course, Lesson } from '../../course';
 import { useAppSelector, useForm } from '../../shared/hooks';
 import { Student } from '../entities';
@@ -13,30 +14,31 @@ export const EditStudentForm: React.FC<{
 
   const { selected } = useAppSelector(state => state.student);
 
-  const { courses, selectedCourse, selectedLesson } = useAppSelector(state => state.course);
+  const { selectedCourse, selectedLesson } = useAppSelector(state => state.course);
 
-  const { formState, onInputChange, setFormState } = useForm({ ...selected });
+  const { formState, setFormState, onInputChange } = useForm({ ...selected });
 
   useEffect(() => {
     if (selected) {
       setFormState({
+        courses: [ selectedCourse as Course ],
         fullName: selected.fullName || '',
         jobPosition: selected.jobPosition || '',
       });
     }
-  }, [setFormState, selected]);
+  }, [setFormState, selected, selectedCourse]);
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (formState.fullName?.trim().length === 0 || !selectedCourse) return;
+    if (formState.fullName?.trim().length === 0) return;
     
-    onEditStudent({ courses: [selectedCourse], fullName: formState.fullName, jobPosition: formState.jobPosition });
+    onEditStudent({ fullName: formState.fullName, jobPosition: formState.jobPosition });
   }
 
   const handleSelectCourse = (event: React.FormEvent) => {
     event.preventDefault();
-    const course = courses.find(c => c.id.toLocaleString() === (event.target as HTMLInputElement).value);
+    const course = coursesData?.find(c => c?.id.toLocaleString() === (event.target as HTMLInputElement).value);
     if (!course) return;
     onSelectCourse(course);
   }
@@ -76,7 +78,7 @@ export const EditStudentForm: React.FC<{
           </InputLabel>
           <NativeSelect
             name='selectedCourse'
-            value={ selectedCourse?.id }
+            value={ selected?.courses?.[0]?.id }
             inputProps={{
               name: 'course',
               id: 'uncontrolled-native',
@@ -84,7 +86,7 @@ export const EditStudentForm: React.FC<{
             onChange={ handleSelectCourse }
           >
             {
-              courses.map(course => (
+              coursesData.map(course => (
                 <option key={course.id} value={course.id}>{ course.name }</option>
               ))
             }
@@ -92,7 +94,7 @@ export const EditStudentForm: React.FC<{
         </FormControl>
         {
           selectedCourse && (
-            <FormControl fullWidth sx={{ ml: 3, my: 1 }}>
+            <FormControl fullWidth sx={{ mb: 2 }}>
               <InputLabel variant="standard" htmlFor="uncontrolled-native">
                 Lesson
               </InputLabel>

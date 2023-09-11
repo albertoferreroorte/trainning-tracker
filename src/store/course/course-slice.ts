@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { courses } from '../../assets/courses';
+import { coursesData } from '../../assets/courses';
 import { Course, Lesson } from '../../course';
 
 interface CourseState {
@@ -9,7 +9,7 @@ interface CourseState {
 }
 
 const initialState: CourseState = {
-  courses: courses,
+  courses: coursesData,
   selectedCourse: null,
   selectedLesson: null,
 };

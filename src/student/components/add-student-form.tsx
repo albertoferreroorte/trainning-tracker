@@ -1,6 +1,5 @@
-import { Button, FormControl, Grid, InputLabel, NativeSelect, TextField } from '@mui/material';
-import { Course } from '../../course';
-import { useAppSelector, useForm } from '../../shared/hooks';
+import { Button, Grid, TextField } from '@mui/material';
+import { useForm } from '../../shared/hooks';
 import { StudentFormData } from '../entities';
 
 const initialForm: StudentFormData = {
@@ -9,11 +8,8 @@ const initialForm: StudentFormData = {
 };
 
 export const AddStudentForm: React.FC<{
-  onAddStudent: (course: Course, name: string, position: string) => void,
-  onAddCourse: (course: Course) => void,
-}> = ({ onAddStudent, onAddCourse }) => {
-
-  const { courses, selectedCourse } = useAppSelector(state => state.course);
+  onAddStudent: (name: string, position: string) => void,
+}> = ({ onAddStudent }) => {
 
   const { formState: { fullName = '', jobPosition = '' }, onInputChange } = useForm(initialForm);
 
@@ -22,16 +18,7 @@ export const AddStudentForm: React.FC<{
 
     if (fullName.trim().length === 0) return;
 
-    onAddStudent(selectedCourse || courses[0], fullName, jobPosition);
-  }
-
-  const handleSelectCourse = (event: React.FormEvent) => {
-    event.preventDefault();
-
-    const course = courses.find(c => c.id.toLocaleString() === (event.target as HTMLInputElement).value);
-    
-    if (!course) return;
-    onAddCourse(course);
+    onAddStudent(fullName, jobPosition);
   }
 
   return (
@@ -58,25 +45,6 @@ export const AddStudentForm: React.FC<{
           variant='outlined'
           onChange={ onInputChange }
         />
-        <FormControl fullWidth sx={{ my: 3 }}>
-          <InputLabel variant="standard" htmlFor="uncontrolled-native">
-            Course
-          </InputLabel>
-          <NativeSelect
-            value={ selectedCourse?.id }
-            inputProps={{
-              name: 'course',
-              id: 'uncontrolled-native',
-            }}
-            onChange={ handleSelectCourse }
-          >
-            {
-              courses.map(course => (
-                <option key={ course.id } value={ course.id }>{ course.name }</option>
-              ))
-            }
-          </NativeSelect>
-        </FormControl>
         <Button
           type='submit'
           variant='outlined'

@@ -3,7 +3,6 @@ import { Course, Lesson } from '../../course';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { ColumnLayout } from '../../shared/layout/column-layout';
 import { addNewEmptyStudentWithNamePosition, selectStudent, startDeleteStudentById, startSetStudents, startUpdateStudent } from '../../store';
-import { startSelectCourse } from '../../store/course';
 import { selectCourse, selectLesson } from '../../store/course/course-slice';
 import { Student } from '../entities/student';
 import { AddStudentForm } from './add-student-form';
@@ -12,18 +11,16 @@ import { StudentsList } from './students-list';
 
 export const StudentsPage: React.FC = () => {
 
+  const { selectedCourse } = useAppSelector(state => state.course);
+
   const { selected, students } = useAppSelector(state => state.student);
 
   const dispatch = useAppDispatch();
 
-  const onAddStudentHandler = (courseName: Course, name: string, position: string) => {
-    const studentInstance = new Student([courseName], name, position);
+  const onAddStudentHandler = (name: string, position: string) => {
+    const studentInstance = new Student(name, position);
     const studentObject = studentInstance.toObject();
     dispatch(addNewEmptyStudentWithNamePosition(studentObject));
-  };
-
-  const onAddStudentCourse = (course: Course) => {
-    dispatch(startSelectCourse(course));
   };
 
   const handleDeleteStudent = () => {
@@ -36,6 +33,7 @@ export const StudentsPage: React.FC = () => {
   const handleSaveStudent = (student: Partial<Student>) => {
     const studentEntity = {
       ...student,
+      courses: [selectedCourse as Course],
       id: selected?.id,
     };
     if (selected) {
@@ -63,7 +61,6 @@ export const StudentsPage: React.FC = () => {
         <Typography variant="h2" component='h4'>Create student</Typography>
         <AddStudentForm
           onAddStudent={ onAddStudentHandler }
-          onAddCourse= { onAddStudentCourse }
         />
       </Box>
       <ColumnLayout>

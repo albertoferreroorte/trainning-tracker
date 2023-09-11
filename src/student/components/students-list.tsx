@@ -69,10 +69,10 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
                     { student.fullName }
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    {  student.jobPosition }
+                    { student.jobPosition }
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    { student.courses?.map(course => course.name) }
+                    { student.courses?.map(course => course?.name) }
                   </TableCell>
                 </TableRow>
               );
