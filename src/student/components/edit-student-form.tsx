@@ -21,7 +21,7 @@ export const EditStudentForm: React.FC<{
   useEffect(() => {
     if (selected) {
       setFormState({
-        courses: [ selectedCourse as Course ],
+        courses: selected.courses,
         fullName: selected.fullName || '',
         jobPosition: selected.jobPosition || '',
       });
@@ -78,14 +78,14 @@ export const EditStudentForm: React.FC<{
           </InputLabel>
           <NativeSelect
             name='selectedCourse'
-            value={ selectedCourse?.id }
+            value={ selectedCourse?.id ?? 0}
             inputProps={{
               name: 'course',
               id: 'uncontrolled-native',
             }}
             onChange={ handleSelectCourse }
           >
-            <option value=""></option>
+            <option value="0"></option>
             {
               coursesData.map(course => (
                 <option key={course.id} value={course.id}>{ course.name }</option>

@@ -31,40 +31,29 @@ export const StudentsPage: React.FC = () => {
   };
 
   const handleSaveStudent = (student: Partial<Student>) => {
-    if (selected) {      
-      const studentCourses = Array.isArray(student.courses)
-        ? student.courses
-        : [];
-      const isCourseSelected = selectedCourse
-        ? !studentCourses.some((course) => course.id === selectedCourse.id)
-        : false;
-      const updatedCourses = isCourseSelected && selectedCourse
-        ? [...studentCourses, selectedCourse]
-        : studentCourses;
-      const updatedStudentEntity: Partial<Student> = {
-        ...student,
-        courses: updatedCourses,
-        id: selected.id,
-      };
-      const updatedStudents = students.map((studentItem) => {
-        if (studentItem.id === selected.id) {
-          const studentCourses = studentItem.courses || [];
-          const updatedStudentCourses = isCourseSelected && selectedCourse
-            ? [...studentCourses, selectedCourse]
-            : studentCourses;
-          return {
+    if (!selected) return;
+    const studentCourses = selected.courses || [];
+    const updatedStudentCourses = selectedCourse
+      ? [...studentCourses.filter(course => course.id !== selectedCourse.id), selectedCourse]
+      : studentCourses;
+    const updatedStudentEntity: Partial<Student> = {
+      ...student,
+      courses: updatedStudentCourses,
+      id: selected.id,
+    };
+    const updatedStudents = students.map(studentItem =>
+      studentItem.id === selected.id
+        ? {
             ...studentItem,
             courses: updatedStudentCourses,
             fullName: student.fullName || studentItem.fullName,
             jobPosition: student.jobPosition || studentItem.jobPosition,
-          };
-        }
-        return studentItem;
-      });
-      dispatch( selectStudent(updatedStudentEntity) );
-      dispatch( startUpdateStudent(updatedStudentEntity) );
-      dispatch(startSetStudents(updatedStudents));
-    }
+          }
+        : studentItem
+    );
+    dispatch(selectStudent(updatedStudentEntity));
+    dispatch(startUpdateStudent(updatedStudentEntity));
+    dispatch(startSetStudents(updatedStudents));
   };
 
   const handleSelectCourse = (course: Course) => {
