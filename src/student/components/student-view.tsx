@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, Button, Typography } from '@mui/material';
 import { PersonOutline } from '@mui/icons-material';
-import { EditStudentForm } from './edit-student-form';
+import { EditStudentForm } from './';
 import { Student } from '../entities';
 import { Course, Lesson } from '../../course';
 
