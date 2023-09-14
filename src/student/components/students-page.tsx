@@ -20,35 +20,60 @@ export const StudentsPage: React.FC = () => {
   const onAddStudentHandler = (name: string, position: string) => {
     const studentInstance = new Student(name, position);
     const studentObject = studentInstance.toObject();
-    dispatch(addNewEmptyStudentWithNamePosition(studentObject));
+    dispatch( addNewEmptyStudentWithNamePosition(studentObject) );
+    dispatch( selectStudent(null) );
+    dispatch( startSelectCourse(null) );
   };
 
   const handleDeleteStudent = () => {
     dispatch( selectStudent({ selected }) );
     if (selected) {
-      dispatch(startDeleteStudentById(selected.id));
+      dispatch( startDeleteStudentById(selected.id) );
     }
   };
 
   const handleSaveStudent = (student: Partial<Student>) => {
     if (!selected) return;
-
-    const updatedStudents = students.map(studentItem => {
+  
+    const updatedStudents: Partial<Student>[] = students.map(studentItem => {
       if (studentItem.id === selected.id) {
         const existingCourses = studentItem.courses || [];
-        const updatedStudentCourses = [...existingCourses];
-
+        const updatedStudentCourses: Course[] = existingCourses.map(course => {
+          if (selectedCourse && course.id === selectedCourse.id) {
+            const studentCompletedLessons = completedLessons.map(lesson => lesson.id);
+            const completedLessonIds = completedLessons.map(lesson => lesson.id);
+            const newCompletedLessonIds = [...studentCompletedLessons, ...completedLessonIds];
+            const uniqueCompletedLessonIds = Array.from(new Set(newCompletedLessonIds));
+            const updatedCourseLessons = selectedCourse.lessons.filter(lesson =>
+              uniqueCompletedLessonIds.includes(lesson.id)
+            );
+  
+            return {
+              ...course,
+              completedLessons: updatedCourseLessons,
+            } as Course;
+          }
+          return course;
+        });
+  
         if (selectedCourse) {
           const isCourseSelected = !existingCourses.some(course => course.id === selectedCourse.id);
-
           if (isCourseSelected) {
-            updatedStudentCourses.push({
-              ...selectedCourse,
-              completedLessons,
-            });
+            return {
+              ...studentItem,
+              courses: [
+                ...updatedStudentCourses,
+                {
+                  ...selectedCourse,
+                  completedLessons,
+                } as Course
+              ],
+              fullName: student.fullName || studentItem.fullName,
+              jobPosition: student.jobPosition || studentItem.jobPosition,
+            };
           }
         }
-
+  
         return {
           ...studentItem,
           courses: updatedStudentCourses,
@@ -56,17 +81,16 @@ export const StudentsPage: React.FC = () => {
           jobPosition: student.jobPosition || studentItem.jobPosition,
         };
       }
-
+  
       return studentItem;
     });
-
+  
     const updatedStudent = updatedStudents.find(s => s.id === selected.id);
     if (updatedStudent) dispatch( selectStudent(updatedStudent) );
     dispatch( startSetStudents(updatedStudents) );
-
   };
   
-
+  
   const handleSelectCourse = (course: Course) => {
     dispatch( startSelectCourse(course) );
   }

@@ -1,3 +1,4 @@
+import { HourglassEmpty } from '@mui/icons-material';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Typography } from '@mui/material';
 import { useState } from 'react';
 import { calculateCourseProgress } from '../../shared/helpers';
@@ -80,13 +81,15 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
                   </TableCell>
                   <TableCell component="th" scope="row">
                     {
-                      student.courses?.map(({ id, name, lessons, completedLessons }) =>
-                        <ProgressBar
-                          key={ id }
-                          name={ name }
-                          progress={ calculateCourseProgress(lessons, completedLessons) }
-                        />
-                      )
+                      student.courses
+                        ? student.courses.map(({ id, name, lessons, completedLessons }) =>
+                          <ProgressBar
+                            key={ id }
+                            name={ name }
+                            progress={ calculateCourseProgress(lessons, completedLessons) }
+                          />
+                        )
+                        : <HourglassEmpty color='disabled' />
                     }
                   </TableCell>
                 </TableRow>

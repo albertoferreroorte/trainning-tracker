@@ -1,16 +1,10 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { Course, Lesson } from '../../course';
-import { selectCourse, selectLesson, setActiveCourse, setCompletedLessons } from './course-slice';
+import { selectCourse, setActiveCourse, setCompletedLessons } from './course-slice';
 
 export const startSelectCourse = (course: Course | null) => {
   return ( dispatch: Dispatch ) => {
     dispatch( selectCourse(course) );
-  }
-}
-
-export const startSelectLesson = (lesson: Lesson | null) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( selectLesson(lesson) );
   }
 }
 

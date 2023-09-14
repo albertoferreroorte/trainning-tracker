@@ -45,7 +45,7 @@ export const EditStudentForm: React.FC<{
     const course = courses?.find(c => c.id === Number(event.target.value));
     if (!course) return;
     onSelectCourse(course);
-    const studentCompletedLessons = selected?.courses?.find(c => c.id === course.id)?.completedLessons.map(l => l.title) || []
+    const studentCompletedLessons = students.find(s => s.id === selected?.id)?.courses?.find(c => c.id === course.id)?.completedLessons.map(l => l.title) || []
     setSelectedLessons(studentCompletedLessons);
   }
 
