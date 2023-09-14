@@ -2,8 +2,8 @@ import { Box, Typography } from '@mui/material';
 import { Course, Lesson } from '../../course';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { ColumnLayout } from '../../shared/layout/column-layout';
-import { addNewEmptyStudentWithNamePosition, selectStudent, startDeleteStudentById, startSetCourses, startSetStudents, startUpdateStudent } from '../../store';
-import { selectCourse, selectLesson } from '../../store/course/course-slice';
+import { addNewEmptyStudentWithNamePosition, selectStudent, startDeleteStudentById, startSetStudents } from '../../store';
+import { startSelectCourse, startSetActiveCourse, startSetCompletedLessons } from '../../store/course';
 import { Student } from '../entities/student';
 import { AddStudentForm } from './add-student-form';
 import { StudentView } from './student-view';
@@ -11,7 +11,7 @@ import { StudentsList } from './students-list';
 
 export const StudentsPage: React.FC = () => {
 
-  const { selectedCourse } = useAppSelector(state => state.course);
+  const { selectedCourse, completedLessons } = useAppSelector(state => state.course);
 
   const { selected, students } = useAppSelector(state => state.student);
 
@@ -32,39 +32,48 @@ export const StudentsPage: React.FC = () => {
 
   const handleSaveStudent = (student: Partial<Student>) => {
     if (!selected) return;
-    const studentCourses = selected.courses || [];
-    const updatedStudentCourses = selectedCourse
-      ? [...studentCourses.filter(course => course.id !== selectedCourse.id), selectedCourse]
-      : studentCourses;
-    const updatedStudentEntity: Partial<Student> = {
-      ...student,
-      courses: updatedStudentCourses,
-      id: selected.id,
-    };
-    const updatedStudents = students.map(studentItem =>
-      studentItem.id === selected.id
-        ? {
-            ...studentItem,
-            courses: updatedStudentCourses,
-            fullName: student.fullName || studentItem.fullName,
-            jobPosition: student.jobPosition || studentItem.jobPosition,
+
+    const updatedStudents = students.map(studentItem => {
+      if (studentItem.id === selected.id) {
+        const existingCourses = studentItem.courses || [];
+        const updatedStudentCourses = [...existingCourses];
+
+        if (selectedCourse) {
+          const isCourseSelected = !existingCourses.some(course => course.id === selectedCourse.id);
+
+          if (isCourseSelected) {
+            updatedStudentCourses.push({
+              ...selectedCourse,
+              completedLessons,
+            });
           }
-        : studentItem
-    );
-    dispatch(selectStudent(updatedStudentEntity));
-    dispatch(startUpdateStudent(updatedStudentEntity));
+        }
+
+        return {
+          ...studentItem,
+          courses: updatedStudentCourses,
+          fullName: student.fullName || studentItem.fullName,
+          jobPosition: student.jobPosition || studentItem.jobPosition,
+        };
+      }
+
+      return studentItem;
+    });
+
     dispatch(startSetStudents(updatedStudents));
+
+    if (selectedCourse) {
+      dispatch(startSetActiveCourse(selectedCourse));
+    }
   };
+  
 
   const handleSelectCourse = (course: Course) => {
-    dispatch( selectCourse(course) );
-    dispatch( startSetCourses(course) );
+    dispatch( startSelectCourse(course) );
   }
 
-  const handleSelectLesson = (lesson: Lesson) => {
-    if (lesson) {
-      dispatch( selectLesson(lesson) );
-    }
+  const handleSelectLessons = (lessons: Lesson[]) => {
+    dispatch( startSetCompletedLessons(lessons) );
   }
 
   return (
@@ -84,7 +93,7 @@ export const StudentsPage: React.FC = () => {
           >
             {
               !students.length ? (
-                <Box sx={{ mr: 3, opacity: 0.75 }}>No</Box>
+                <Typography fontSize={ 30 } sx={{ mr: 3, opacity: 0.75 }}>No</Typography>
               ) : ''
             }
             Students
@@ -104,7 +113,7 @@ export const StudentsPage: React.FC = () => {
                   onDeleteStudent={ handleDeleteStudent }
                   onSaveStudent={ handleSaveStudent }
                   onSelectCourse={ handleSelectCourse }
-                  onSelectLesson={ handleSelectLesson }
+                  onSelectLessons={ handleSelectLessons }
                 />
               </Box>
             </ColumnLayout>

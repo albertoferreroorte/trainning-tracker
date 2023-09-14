@@ -10,10 +10,10 @@ interface StudentViewProps {
   onDeleteStudent: () => void;
   onSaveStudent: (student: Partial<Student>) => void;
   onSelectCourse: (course: Course) => void;
-  onSelectLesson: (lesson: Lesson) => void;
+  onSelectLessons: (lessons: Lesson[]) => void;
 }
 
-export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition, onDeleteStudent, onSaveStudent, onSelectCourse, onSelectLesson }) => {
+export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition, onDeleteStudent, onSaveStudent, onSelectCourse, onSelectLessons }) => {
   const handleDeleteClick = () => {
     onDeleteStudent();
   };
@@ -26,8 +26,8 @@ export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition,
     onSelectCourse(course);
   };
 
-  const handleSelectLesson = (lesson: Lesson) => {
-    onSelectLesson(lesson);
+  const handleSelectLessons = (lessons: Lesson[]) => {
+    onSelectLessons(lessons);
   };
 
   return (
@@ -51,7 +51,7 @@ export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition,
         <EditStudentForm
           onEditStudent={ handleSaveClick }
           onSelectCourse={ handleSelectCourse }
-          onSelectLesson={ handleSelectLesson }
+          onSelectLessons={ handleSelectLessons }
         />
       </CardContent>
     </Card>

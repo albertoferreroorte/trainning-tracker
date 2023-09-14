@@ -1,12 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { Course } from '../../course';
 import { Student } from '../../student/entities';
 
 interface StudentState {
+  studentCourses: Course[];
   students: Student[];
   selected: Student | null;
 }
 
 const initialState: StudentState = {
+  studentCourses: [],
   students: [],
   selected: null,
 };
@@ -32,7 +35,7 @@ export const studentSlice = createSlice({
       },
       updateStudent: (state, action) => {
         state.students = state.students.map(student => {
-          if (student.id === action.payload.id) {
+          if (student.id === action.payload?.id) {
             return action.payload;
           }
           return student;

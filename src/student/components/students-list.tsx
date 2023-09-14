@@ -2,7 +2,7 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { selectStudentByEntity } from '../../store';
-import { startSelectCourse } from '../../store/course';
+import { startSelectCourse, startSetCompletedLessons } from '../../store/course';
 import { Student } from '../entities/student';
 
 export const StudentsList: React.FC<{ students: Student[] }> = () => {
@@ -15,8 +15,9 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
   const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
     const student: Student | undefined = students.find(s => s.id === id);
     if (!student) return;
-    dispatch(selectStudentByEntity(student));
-    dispatch(startSelectCourse(null));
+    dispatch( selectStudentByEntity(student) );
+    dispatch( startSelectCourse(null) );
+    dispatch( startSetCompletedLessons([]) );
   };
   const isSelected = (name: string) => selected?.id?.indexOf(name) !== -1;
 

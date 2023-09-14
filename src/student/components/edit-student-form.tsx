@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react';
 import { PersonOutline } from '@mui/icons-material';
-import { Button, FormControl, Grid, InputLabel, NativeSelect, TextField } from '@mui/material';
-import { useEffect } from 'react';
+import { Button, Checkbox, FormControl, Grid, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import { coursesData } from '../../assets/courses';
 import { Course, Lesson } from '../../course';
 import { useAppSelector, useForm } from '../../shared/hooks';
@@ -9,14 +9,18 @@ import { Student } from '../entities';
 export const EditStudentForm: React.FC<{
   onEditStudent: (student: Partial<Student>) => void,
   onSelectCourse: (course: Course) => void,
-  onSelectLesson: (lesson: Lesson) => void,
-}> = ({ onEditStudent, onSelectCourse, onSelectLesson }) => {
+  onSelectLessons: (lesson: Lesson[]) => void,
+}> = ({ onEditStudent, onSelectCourse, onSelectLessons }) => {
 
-  const { selected } = useAppSelector(state => state.student);
+  const { selected, students } = useAppSelector(state => state.student);
 
-  const { selectedCourse, selectedLesson } = useAppSelector(state => state.course);
+  const { courses, selectedCourse } = useAppSelector(state => state.course);
 
   const { formState, setFormState, onInputChange } = useForm({ ...selected });
+
+  const studentCompleteLessons = students.find(s => s.id === selected?.id)?.courses?.find(c => c.id === selectedCourse?.id)?.completedLessons;
+  const studentCompleteLessonsByString = studentCompleteLessons?.map(l => l.title);
+  const [selectedLessons, setSelectedLessons] = useState<string[]>(studentCompleteLessonsByString || []);
 
   useEffect(() => {
     if (selected) {
@@ -26,7 +30,7 @@ export const EditStudentForm: React.FC<{
         jobPosition: selected.jobPosition || '',
       });
     }
-  }, [setFormState, selected, selectedCourse]);
+  }, [setFormState, selected]);
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
@@ -36,22 +40,29 @@ export const EditStudentForm: React.FC<{
     onEditStudent({ fullName: formState.fullName, jobPosition: formState.jobPosition });
   }
 
-  const handleSelectCourse = (event: React.FormEvent) => {
+  const handleSelectCourse = (event: SelectChangeEvent) => {
     event.preventDefault();
-    const course = coursesData?.find(c => c?.id.toLocaleString() === (event.target as HTMLInputElement).value);
+    const course = courses?.find(c => c.id === Number(event.target.value));
     if (!course) return;
     onSelectCourse(course);
+    const studentCompletedLessons = selected?.courses?.find(c => c.id === course.id)?.completedLessons.map(l => l.title) || []
+    setSelectedLessons(studentCompletedLessons);
   }
 
-  const handleSelectLesson = (event: React.FormEvent) => {
-    event.preventDefault();
-    const lesson = selectedCourse?.lessons.find(c => c.id.toLocaleString() === (event.target as HTMLInputElement).value);
-    if (!lesson) return;
-    onSelectLesson(lesson);
+  const handleSelectLesson = (event: SelectChangeEvent<typeof selectedLessons>) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedLessons(
+      typeof value === 'string' ? value.split(',') : value,
+    );
+    const lessons = courses.flatMap(c => c.lessons.filter(l => event.target.value.includes(l.title)));
+    if (!lessons) return;
+    onSelectLessons(lessons);
   }
 
   return (
-    <Grid container sx={{ mt: 3 }}>
+    <Grid container sx={{ maxWidth: 500, mt: 3 }}>
       <form aria-label="form" onSubmit={ submitHandler }>
         <TextField
           fullWidth
@@ -72,48 +83,50 @@ export const EditStudentForm: React.FC<{
           variant='outlined'
           onChange={ onInputChange }
         />
+        <Typography marginTop={ 5 } variant='h5'>Tracking time</Typography>
         <FormControl fullWidth sx={{ my: 3 }}>
-          <InputLabel variant="standard" htmlFor="uncontrolled-native">
-            Course
+          <InputLabel id="course-selection">
+            Select course
           </InputLabel>
-          <NativeSelect
-            name='selectedCourse'
-            value={ selectedCourse?.id ?? 0}
-            inputProps={{
-              name: 'course',
-              id: 'uncontrolled-native',
-            }}
+          <Select
+            input={<OutlinedInput label="Select course" />}
+            labelId='course-selection'
+            name="select-course"
             onChange={ handleSelectCourse }
+            value={ selectedCourse?.id.toLocaleString() ?? '0'}
           >
-            <option value="0"></option>
+            <MenuItem value="0"></MenuItem>
             {
               coursesData.map(course => (
-                <option key={course.id} value={course.id}>{ course.name }</option>
+                <MenuItem key={ course.id } value={ course.id }>{ course.name }</MenuItem>
               ))
             }
-          </NativeSelect>
+          </Select>
         </FormControl>
         {
           selectedCourse && (
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                Lesson
+            <FormControl fullWidth sx={{ mb: 2, maxWidth: 500 }}>
+              <InputLabel id="lesson-selection">
+                Select completed lessons
               </InputLabel>
-              <NativeSelect
-                name='selectedLesson'
-                defaultValue={ selectedLesson?.id }
-                inputProps={{
-                  name: 'lesson',
-                  id: 'uncontrolled-native',
-                }}
+              <Select
+                input={<OutlinedInput label="Select completed lessons" />}
+                labelId='lesson-selection'
+                multiple
+                name="select-lesson"
                 onChange={ handleSelectLesson }
+                renderValue={(selected) => selected.join(', ')}
+                value={ selectedLessons }
               >
                 {
                   selectedCourse.lessons.map(lesson => (
-                    <option key={lesson.id} value={lesson.id}>{ lesson.title }</option>
+                    <MenuItem key={ lesson.id } value={ lesson.title }>
+                      <Checkbox checked={ selectedLessons.indexOf(lesson.title) > -1 } />
+                      <ListItemText primary={ lesson.title } />
+                    </MenuItem>
                   ))
                 }
-              </NativeSelect>
+              </Select>
             </FormControl>
           )
         }

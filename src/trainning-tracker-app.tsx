@@ -16,7 +16,7 @@ const tabs = [
   }
 ];
 
-export const TrainningTrackerApp = () => {
+export const TrainningTrackerApp: React.FC = () => {
   const location = useLocation();
   const [value, setValue] = useState<number>(0);
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {

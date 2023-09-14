@@ -1,7 +1,6 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { Course } from '../../course';
 import { Student } from '../../student/entities';
-import { addCourse, addNewEmptyStudent, deleteStudentById, selectStudent, setStudents, updateStudent } from './studentSlice';
+import { addNewEmptyStudent, deleteStudentById, selectStudent, setStudents, updateStudent } from './studentSlice';
 
 export const addNewEmptyStudentWithNamePosition = (newStudent: Partial<Student>) => {
   return ( dispatch: Dispatch ) => {
@@ -18,12 +17,6 @@ export const selectStudentByEntity = (student: Student) => {
 export const startDeleteStudentById = (id: string) => {
   return ( dispatch: Dispatch ) => {
     dispatch( deleteStudentById(id) );
-  }
-}
-
-export const startSetCourses = (course: Course) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( addCourse(course) );
   }
 }
 
