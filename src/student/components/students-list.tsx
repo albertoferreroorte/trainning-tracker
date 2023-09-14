@@ -7,6 +7,7 @@ import { Student } from '../entities/student';
 
 export const StudentsList: React.FC<{ students: Student[] }> = () => {
   const { selected, students } = useAppSelector(state => state.student);
+  const { selectedCourse } = useAppSelector(state => state.course);
   const dispatch = useAppDispatch();
 
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
@@ -17,7 +18,8 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
     if (!student) return;
     dispatch( selectStudentByEntity(student) );
     dispatch( startSelectCourse(null) );
-    dispatch( startSetCompletedLessons([]) );
+    const studentCompetedLessons = students.find(s => s.id === selected?.id)?.courses?.find(c => c.id === selectedCourse?.id)?.completedLessons;
+    dispatch( startSetCompletedLessons(studentCompetedLessons || []) );
   };
   const isSelected = (name: string) => selected?.id?.indexOf(name) !== -1;
 

@@ -3,7 +3,7 @@ import { Course, Lesson } from '../../course';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { ColumnLayout } from '../../shared/layout/column-layout';
 import { addNewEmptyStudentWithNamePosition, selectStudent, startDeleteStudentById, startSetStudents } from '../../store';
-import { startSelectCourse, startSetActiveCourse, startSetCompletedLessons } from '../../store/course';
+import { startSelectCourse, startSetCompletedLessons } from '../../store/course';
 import { Student } from '../entities/student';
 import { AddStudentForm } from './add-student-form';
 import { StudentView } from './student-view';
@@ -60,11 +60,10 @@ export const StudentsPage: React.FC = () => {
       return studentItem;
     });
 
-    dispatch(startSetStudents(updatedStudents));
+    const updatedStudent = updatedStudents.find(s => s.id === selected.id);
+    if (updatedStudent) dispatch( selectStudent(updatedStudent) );
+    dispatch( startSetStudents(updatedStudents) );
 
-    if (selectedCourse) {
-      dispatch(startSetActiveCourse(selectedCourse));
-    }
   };
   
 
