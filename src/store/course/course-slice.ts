@@ -9,7 +9,7 @@ interface CourseState {
   selectedCourse: Course | null;
 }
 
-const courses = coursesData.map(c => ({
+const courses: Course[] = coursesData.map(c => ({
   ...c,
   activeLesson: { ...c.lessons[0], completed: false },
   completedLessons: [],
@@ -29,6 +29,9 @@ export const courseSlice = createSlice({
     name: 'course',
     initialState,
     reducers: {
+      addNewEmptyCourse: (state, action) => {
+        state.courses.push(action.payload);
+      },
       selectCourse: (state, action) => {
         state.selectedCourse = action.payload;
       },
@@ -48,6 +51,7 @@ export const courseSlice = createSlice({
 });
 
 export const {
+  addNewEmptyCourse,
   selectCourse,
   setActiveCourse,
   setCompletedLessons,

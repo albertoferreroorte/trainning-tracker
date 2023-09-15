@@ -131,7 +131,7 @@ export const EditStudentForm: React.FC<{
           )
         }
         <Button
-          aria-label="delete"
+          aria-label="submit"
           color="primary"
           startIcon={<PersonOutline fontSize='large' />}
           type='submit'

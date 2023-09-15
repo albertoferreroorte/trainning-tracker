@@ -1,10 +1,11 @@
 import { Route, Routes } from "react-router-dom"
+import { CoursesPage } from "../course/components"
 import { StudentsPage } from "../student/components"
 
 export const AppRouter = () => {
   return (
     <Routes>
-      <Route path="courses" element={ <h1>Courses page</h1>} />
+      <Route path="courses" element={ <CoursesPage /> } />
       <Route path="students" element={ <StudentsPage /> } />
       <Route path="/*" element={ <StudentsPage /> } />
     </Routes>
