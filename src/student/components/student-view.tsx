@@ -3,17 +3,19 @@ import { PersonOutline } from '@mui/icons-material';
 import { EditStudentForm } from './';
 import { Student } from '../entities';
 import { Course, Lesson } from '../../course';
+import { format, parseISO } from 'date-fns';
 
 interface StudentViewProps {
   fullName: string;
   jobPosition: string;
+  sinceDate: string;
   onDeleteStudent: () => void;
   onSaveStudent: (student: Partial<Student>) => void;
   onSelectCourse: (course: Course) => void;
   onSelectLessons: (lessons: Lesson[]) => void;
 }
 
-export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition, onDeleteStudent, onSaveStudent, onSelectCourse, onSelectLessons }) => {
+export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition, sinceDate, onDeleteStudent, onSaveStudent, onSelectCourse, onSelectLessons }) => {
   const handleDeleteClick = () => {
     onDeleteStudent();
   };
@@ -44,10 +46,12 @@ export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition,
             Delete student
           </Button>
         }
+        sx={{ paddingBottom: 0 }}
         title={ <Typography variant="h2" component='h4'>{ fullName }</Typography> }
         subheader={ jobPosition }
       />
-      <CardContent>
+      <CardContent sx={{ marginTop: 1, paddingTop: 0 }}>
+        <Typography variant="body2" display="block" gutterBottom>Studying since { format(parseISO(sinceDate), 'LLLL yyyy') }</Typography>
         <EditStudentForm
           onEditStudent={ handleSaveClick }
           onSelectCourse={ handleSelectCourse }

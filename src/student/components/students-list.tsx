@@ -1,5 +1,6 @@
 import { HourglassEmpty } from '@mui/icons-material';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Typography } from '@mui/material';
+import { format, parseISO } from 'date-fns';
 import { useState } from 'react';
 import { calculateCourseProgress } from '../../shared/helpers';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
@@ -40,6 +41,14 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
     return 0;
   });
 
+  const sortedSinceDates = students.slice().sort((a, b) => {
+    const isAsc = order === 'asc';
+    if (orderBy === 'sinceDate') {
+      return isAsc ? a.sinceDate.localeCompare(b.sinceDate) : b.sinceDate.localeCompare(a.sinceDate);
+    }
+    return 0;
+  });
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="students list table">
@@ -56,6 +65,19 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
                     Student
                   </TableSortLabel>)
                   : ( 'Student' )
+              }
+            </TableCell>
+            <TableCell>
+              {
+                sortedSinceDates.length > 1
+                  ? (<TableSortLabel
+                      active={orderBy === 'sinceDate'}
+                      direction={order}
+                      onClick={() => handleRequestSort('sinceDate')}
+                    >
+                      Studying since
+                    </TableSortLabel>)
+                  : ( 'Studying since' )
               }
             </TableCell>
             <TableCell>Job position</TableCell>
@@ -75,6 +97,9 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
                 >
                   <TableCell component="th" scope="row">
                     <Typography>{ student.fullName }</Typography>
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    <Typography>{ format(parseISO(student.sinceDate), 'LLL yyyy') }</Typography>
                   </TableCell>
                   <TableCell component="th" scope="row">
                     <Typography>{ student.jobPosition }</Typography>

@@ -100,7 +100,7 @@ export const StudentsPage: React.FC = () => {
   }
 
   return (
-    <ColumnLayout>
+    <ColumnLayout layout="secondary">
       <Box sx={{ p: { md: 3 }, mt: 1 }}>
         <Typography variant="h2" component='h4'>Create student</Typography>
         <AddStudentForm
@@ -133,6 +133,7 @@ export const StudentsPage: React.FC = () => {
               <Box sx={{ flexGrow: 1, p: { sm: '100px'}, maxWidth: 800, width: 'calc( 100% - 200px)' }}>
                 <StudentView
                   { ...selected }
+                  sinceDate={ selected.sinceDate }
                   onDeleteStudent={ handleDeleteStudent }
                   onSaveStudent={ handleSaveStudent }
                   onSelectCourse={ handleSelectCourse }

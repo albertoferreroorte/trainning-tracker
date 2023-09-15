@@ -58,7 +58,11 @@ button:focus-visible {
   margin: 1rem;
 }
 
-.column-section {
+.column-section--main {
+  background: linear-gradient(45deg, #e1fcff, #fff);
+}
+
+.column-section--secondary {
   background: linear-gradient(45deg, #fff0e0, #fff);
 }
 

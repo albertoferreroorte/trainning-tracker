@@ -6,6 +6,8 @@ import { Course, Lesson } from '../../course';
 import { useAppSelector, useForm } from '../../shared/hooks';
 import { Student } from '../entities';
 
+const setSelectLessonTitle = ( index: number, title: string ) => ( `${index}. ${title}`);
+
 export const EditStudentForm: React.FC<{
   onEditStudent: (student: Partial<Student>) => void,
   onSelectCourse: (course: Course) => void,
@@ -41,12 +43,14 @@ export const EditStudentForm: React.FC<{
   }
 
   const handleSelectCourse = (event: SelectChangeEvent) => {
-    event.preventDefault();
     const course = courses?.find(c => c.id === Number(event.target.value));
     if (!course) return;
     onSelectCourse(course);
-    const studentCompletedLessons = students.find(s => s.id === selected?.id)?.courses?.find(c => c.id === course.id)?.completedLessons.map(l => l.title) || []
+    const student = students.find(s => s.id === selected?.id)?.courses?.find(c => c.id === course.id);
+    const studentCompletedLessons = student?.completedLessons.map(l => l.title) || []
     setSelectedLessons(studentCompletedLessons);
+    const lessons = student?.completedLessons.filter(l => selectedLessons.includes(l.title)) || [];
+    onSelectLessons(lessons);
   }
 
   const handleSelectLesson = (event: SelectChangeEvent<typeof selectedLessons>) => {
@@ -119,12 +123,13 @@ export const EditStudentForm: React.FC<{
                 value={ selectedLessons }
               >
                 {
-                  selectedCourse.lessons.map(lesson => (
-                    <MenuItem key={ lesson.id } value={ lesson.title }>
+                  selectedCourse.lessons.map((lesson, index) => {
+                    const title = setSelectLessonTitle(index + 1, lesson.title);
+                    return (<MenuItem key={ lesson.id } value={ lesson.title }>
                       <Checkbox checked={ selectedLessons.indexOf(lesson.title) > -1 } />
-                      <ListItemText primary={ lesson.title } />
-                    </MenuItem>
-                  ))
+                      <ListItemText primary={ title } />
+                    </MenuItem>);
+                  })
                 }
               </Select>
             </FormControl>

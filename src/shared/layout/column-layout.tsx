@@ -2,11 +2,12 @@ import { Grid } from '@mui/material';
 
 export const ColumnLayout: React.FC<{
   children: React.ReactNode,
-}> = ({ children }) => {
+  layout?: string,
+}> = ({ children, layout = 'main' }) => {
   return (
     <Grid
       alignItems="center"
-      className="column-section"
+      className={ `column-section column-section--${ layout }` }
       container
       direction="column"
       height="100%"
