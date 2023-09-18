@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, Button, Typography } from '@mui/material
 import { PersonOutline } from '@mui/icons-material';
 import { Course, Lesson } from '../../course';
 import { EditCourseForm } from './';
+import { format, parseISO } from 'date-fns';
 
 interface CourseViewProps {
   duration: string;
@@ -14,7 +15,7 @@ interface CourseViewProps {
   onSaveCourse: (course: Partial<Course>) => void;
 }
 
-export const CourseView: React.FC<CourseViewProps> = ({ duration, name, objectives, onAddLesson, onDeleteCourse, onDeleteLesson, onSaveCourse }) => {
+export const CourseView: React.FC<CourseViewProps> = ({ duration, name, objectives, sinceDate, onAddLesson, onDeleteCourse, onDeleteLesson, onSaveCourse }) => {
   
   const handleAddLesson = (lesson: Partial<Lesson>) => {
     onAddLesson(lesson);
@@ -49,7 +50,8 @@ export const CourseView: React.FC<CourseViewProps> = ({ duration, name, objectiv
         title={ <Typography variant="h2" component='h4'>{ name }</Typography> }
         subheader={ objectives }
       />
-      <CardContent>
+      <CardContent sx={{ pt: 0 }}>
+        <Typography variant="body2" display="block">Created { format(parseISO(sinceDate), 'LLLL yyyy') } </Typography>
         <Typography variant="body2" display="block" gutterBottom>Duration { duration } hours</Typography>
         <EditCourseForm
           onAddLesson={ handleAddLesson }

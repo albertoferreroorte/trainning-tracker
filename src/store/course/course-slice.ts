@@ -49,7 +49,7 @@ export const courseSlice = createSlice({
         state.activeCourses = Array.from(existingCoursesSet);
       },
       setCompletedLessons: (state, action) => {
-        state.completedLessons = action.payload;
+        state.completedLessons = [...action.payload];
       },
       setCourseLessons: (state, action) => {
         state.courseLessons = action.payload;

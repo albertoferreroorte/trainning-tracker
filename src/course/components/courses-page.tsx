@@ -9,7 +9,7 @@ export const CoursesPage: React.FC = () => {
 
   const dispatch = useAppDispatch();
 
-  const { courseLessons, courses, selectedCourse } = useAppSelector(state => state.course);
+  const { completedLessons, courseLessons, courses, selectedCourse } = useAppSelector(state => state.course);
 
   const onAddCourseHandler = (name: string, objectives: string) => {
     dispatch( addNewEmptyCourseWithNameObjectives(new Course(name, objectives)) );
@@ -26,6 +26,7 @@ export const CoursesPage: React.FC = () => {
         return {
           ...c,
           ...course,
+          completedLessons,
           courseLessons,
           duration: courseDuration,
         };

@@ -3,6 +3,7 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { Course } from '../entities';
 import { startSelectCourse, startSetCourseLessons } from '../../store/course';
+import { format, parseISO } from 'date-fns';
 
 export const CoursesList: React.FC<{ courses: Course[] }> = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +34,16 @@ export const CoursesList: React.FC<{ courses: Course[] }> = () => {
     setOrderBy(property);
   };
 
-  const sortedCourses = courses.slice().sort((a, b) => {
+  const coursesIncludesCompleted = courses.map(course => {
+    const completedLessons = students.map(student => student.courses?.find(c => c.id === course.id)?.completedLessons);
+    const courseLessons = students.map(student => student.courses?.find(c => c.id === course.id)?.courseLessons);
+    return {
+      ...course,
+      completed: completedLessons.length === courseLessons.length,
+    };
+  });
+
+  const sortedCourses = coursesIncludesCompleted.slice().sort((a, b) => {
     const isAsc = order === 'asc';
     if (orderBy === 'name') {
       return isAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
@@ -59,6 +69,7 @@ export const CoursesList: React.FC<{ courses: Course[] }> = () => {
                   : ( 'Course' )
               }
             </TableCell>
+            <TableCell>Created</TableCell>
             <TableCell>Objectives</TableCell>
             <TableCell>Duration</TableCell>
             <TableCell>Number of students</TableCell>
@@ -78,6 +89,9 @@ export const CoursesList: React.FC<{ courses: Course[] }> = () => {
                 >
                   <TableCell component="th" scope="row">
                     <Typography>{ course.name }</Typography>
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    <Typography>{ format(parseISO(course.sinceDate), 'LLL yyyy') }</Typography>
                   </TableCell>
                   <TableCell component="th" scope="row">
                     <Typography>{ course.objectives }</Typography>
