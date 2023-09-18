@@ -59,7 +59,7 @@ button:focus-visible {
 }
 
 .column-section--main {
-  background: linear-gradient(45deg, #e1fcff, #fff);
+  background: linear-gradient(45deg, rgba(25, 118, 210, 0.08), #fff);
 }
 
 .column-section--secondary {
@@ -76,7 +76,11 @@ button:focus-visible {
 }
 
 .column-section > .column-section > .column-section {
-  background: rgba(25, 118, 210, 0.08);
+  background: linear-gradient(45deg, rgba(25, 118, 210, 0.08), #fff);
+}
+
+.column-section--main > .column-section > .column-section {
+  background: linear-gradient(45deg, #fff0e0, #fff);
 }
 
 .column-section > .column.section > .column-section > * {

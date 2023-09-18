@@ -15,7 +15,7 @@ export const selectStudentByEntity = (student: Student) => {
   }
 }
 
-export const startDeleteStudentById = (id: string) => {
+export const startDeleteStudentById = (id: number) => {
   return ( dispatch: Dispatch ) => {
     dispatch( deleteStudentById(id) );
   }

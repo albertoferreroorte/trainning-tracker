@@ -46,7 +46,7 @@ export const CoursesPage: React.FC = () => {
 
   const handleDeleteCourse = () => {
     if (selectedCourse) {
-      dispatch( startDeleteCourseById(selectedCourse.id.toLocaleString()) );
+      dispatch( startDeleteCourseById(selectedCourse.id) );
     }
   }
 

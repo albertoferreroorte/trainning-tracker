@@ -24,10 +24,9 @@ export const StudentsPage: React.FC = () => {
   };
 
   const handleDeleteStudent = () => {
+    if (!selected) return;
     dispatch( selectStudent({ selected }) );
-    if (selected) {
-      dispatch( startDeleteStudentById(selected.id.toLocaleString()) );
-    }
+    dispatch( startDeleteStudentById(selected.id) );
   };
 
   const handleSaveStudent = (student: Partial<Student>) => {
@@ -45,9 +44,10 @@ export const StudentsPage: React.FC = () => {
             const updatedCourseLessons = selectedStudentCourse.courseLessons.filter(lesson =>
               uniqueCompletedLessonIds.includes(lesson.id)
             );
-  
+            const completed = completedLessons.length === selectedStudentCourse.courseLessons.length;
             return {
               ...course,
+              completed,
               completedLessons: updatedCourseLessons,
             } as Course;
           }

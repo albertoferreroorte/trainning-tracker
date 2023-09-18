@@ -14,7 +14,7 @@ export const startAddNewLesson = (lesson: Partial<Lesson>) => {
   }
 }
 
-export const startDeleteCourseById = (id: string) => {
+export const startDeleteCourseById = (id: number) => {
   return ( dispatch: Dispatch ) => {
     dispatch( deleteCourseById(id) );
   }

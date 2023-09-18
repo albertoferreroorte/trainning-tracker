@@ -13,9 +13,9 @@ export const CoursesList: React.FC<{ courses: Course[] }> = () => {
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<string>('name');
 
-  const getNumberOfStudentsCourse = ( id: number ) => students.filter(s => s.courses?.filter(c => c.id === id && c.courseLessons.some(l => l.id))).length;
+  const getNumberOfStudentsCourse = ( id: number ) => students.filter(s => s.courses?.some(c => c.id === id && c.courseLessons.every(l => l.id))).length;
 
-  const getTimesCompletedCourse = ( id: number ) => students.filter(s => s.courses?.filter(c => c.id === id && c.completed)).length;
+  const getTimesCompletedCourse = ( id: number ) => students.filter(s => s.courses?.some(c => c.id === id && c.completed)).length;
 
   const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
     const course: Course | undefined = courses.find(c => c.id.toLocaleString() === id);
