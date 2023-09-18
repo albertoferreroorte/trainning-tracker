@@ -3,15 +3,17 @@ import { Course } from '../../course';
 import { Student } from '../../student/entities';
 
 interface StudentState {
+  selected: Student | null;
+  selectedStudentCourse: Course | null;
   studentCourses: Course[];
   students: Student[];
-  selected: Student | null;
 }
 
 const initialState: StudentState = {
+  selected: null,
+  selectedStudentCourse: null,
   studentCourses: [],
   students: [],
-  selected: null,
 };
 
 export const studentSlice = createSlice({
@@ -29,6 +31,9 @@ export const studentSlice = createSlice({
         state.students = state.students.filter(
           student => student.id !== action.payload,
         );
+      },
+      selectStudentCourse: (state, action) => {
+        state.selectedStudentCourse = action.payload;
       },
       setStudents: (state, action) => {
         state.students = action.payload;
@@ -52,6 +57,7 @@ export const {
   addNewEmptyStudent,
   deleteStudentById,
   selectStudent,
+  selectStudentCourse,
   setStudents,
   updateStudent,
 } = studentSlice.actions;

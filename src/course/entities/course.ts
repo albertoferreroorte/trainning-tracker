@@ -4,8 +4,9 @@ export class Course {
   activeLesson?: Lesson;
   completed: boolean;
   completedLessons: Lesson[];
+  courseLessons: Lesson[];
+  duration: number;
   id: number;
-  lessons: Lesson[];
   name: string;
   numberOfStudents: number;
   objectives: string;
@@ -15,11 +16,12 @@ export class Course {
     this.activeLesson = lessons?.[0];
     this.completed = false;
     this.completedLessons = [];
+    this.courseLessons = [];
     this.id = new Date().getTime();
-    this.lessons = lessons || [];
     this.name = name;
     this.numberOfStudents = 0;
     this.objectives = objectives;
     this.sinceDate = new Date().toISOString();
+    this.duration = this.courseLessons.reduce((acc, curr) => acc + Number(curr.duration), 0);
   }
 }

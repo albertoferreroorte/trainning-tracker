@@ -4,28 +4,27 @@ import { format, parseISO } from 'date-fns';
 import { useState } from 'react';
 import { calculateCourseProgress } from '../../shared/helpers';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
-import { selectStudentByEntity } from '../../store';
-import { startSelectCourse, startSetCompletedLessons } from '../../store/course';
+import { selectStudentByEntity, startSelectStudentCourse } from '../../store';
+import { startSetCompletedLessons } from '../../store/course';
 import { Student } from '../entities/student';
 import { ProgressBar } from './progress-bar';
 
 export const StudentsList: React.FC<{ students: Student[] }> = () => {
-  const { selected, students } = useAppSelector(state => state.student);
-  const { selectedCourse } = useAppSelector(state => state.course);
+  const { selected, selectedStudentCourse, students } = useAppSelector(state => state.student);
   const dispatch = useAppDispatch();
 
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<string>('fullName');
 
   const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
-    const student: Student | undefined = students.find(s => s.id === id);
+    const student: Student | undefined = students.find(s => s.id.toLocaleString() === id);
     if (!student) return;
     dispatch( selectStudentByEntity(student) );
-    dispatch( startSelectCourse(null) );
-    const studentCompetedLessons = students.find(s => s.id === selected?.id)?.courses?.find(c => c.id === selectedCourse?.id)?.completedLessons;
+    dispatch( startSelectStudentCourse(null) );
+    const studentCompetedLessons = students.find(s => s.id === selected?.id)?.courses?.find(c => c.id === selectedStudentCourse?.id)?.completedLessons;
     dispatch( startSetCompletedLessons(studentCompetedLessons || []) );
   };
-  const isSelected = (name: string) => selected?.id?.indexOf(name) !== -1;
+  const isSelected = (name: string) => selected?.id?.toLocaleString().indexOf(name) !== -1;
 
   const handleRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -87,11 +86,11 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
         <TableBody>
           {
             sortedStudents.map((student) => {
-              const isItemSelected = isSelected(student.id);
+              const isItemSelected = isSelected(student.id.toLocaleString());
               return (
                 <TableRow
                   key={`${student.id}${student.fullName}`}
-                  onClick={(event) => handleClick(event, student.id)}
+                  onClick={(event) => handleClick(event, student.id.toLocaleString())}
                   selected={ isItemSelected }
                   sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer', verticalAlign: 'top' }}
                 >
@@ -107,11 +106,11 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
                   <TableCell component="th" scope="row">
                     {
                       student.courses
-                        ? student.courses.map(({ id, name, lessons, completedLessons }) =>
+                        ? student.courses.map(({ id, name, courseLessons, completedLessons }) =>
                           <ProgressBar
                             key={ id }
                             name={ name }
-                            progress={ calculateCourseProgress(lessons, completedLessons) }
+                            progress={ calculateCourseProgress(courseLessons, completedLessons) }
                           />
                         )
                         : <HourglassEmpty color='disabled' />

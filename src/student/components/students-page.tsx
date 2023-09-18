@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material';
 import { Course, Lesson } from '../../course';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { ColumnLayout } from '../../shared/layout/column-layout';
-import { addNewEmptyStudentWithNamePosition, selectStudent, startDeleteStudentById, startSetStudents } from '../../store';
+import { addNewEmptyStudentWithNamePosition, selectStudent, startDeleteStudentById, startSelectStudentCourse, startSetStudents } from '../../store';
 import { startSelectCourse, startSetCompletedLessons } from '../../store/course';
 import { Student } from '../entities/student';
 import { AddStudentForm } from './add-student-form';
@@ -11,16 +11,14 @@ import { StudentsList } from './students-list';
 
 export const StudentsPage: React.FC = () => {
 
-  const { selectedCourse, completedLessons } = useAppSelector(state => state.course);
+  const { completedLessons } = useAppSelector(state => state.course);
 
-  const { selected, students } = useAppSelector(state => state.student);
+  const { selected, selectedStudentCourse, students } = useAppSelector(state => state.student);
 
   const dispatch = useAppDispatch();
 
   const onAddStudentHandler = (name: string, position: string) => {
-    const studentInstance = new Student(name, position);
-    const studentObject = studentInstance.toObject();
-    dispatch( addNewEmptyStudentWithNamePosition(studentObject) );
+    dispatch( addNewEmptyStudentWithNamePosition(new Student(name, position)) );
     dispatch( selectStudent(null) );
     dispatch( startSelectCourse(null) );
   };
@@ -28,7 +26,7 @@ export const StudentsPage: React.FC = () => {
   const handleDeleteStudent = () => {
     dispatch( selectStudent({ selected }) );
     if (selected) {
-      dispatch( startDeleteStudentById(selected.id) );
+      dispatch( startDeleteStudentById(selected.id.toLocaleString()) );
     }
   };
 
@@ -39,12 +37,12 @@ export const StudentsPage: React.FC = () => {
       if (studentItem.id === selected.id) {
         const existingCourses = studentItem.courses || [];
         const updatedStudentCourses: Course[] = existingCourses.map(course => {
-          if (selectedCourse && course.id === selectedCourse.id) {
+          if (selectedStudentCourse && course.id === selectedStudentCourse.id) {
             const studentCompletedLessons = completedLessons.map(lesson => lesson.id);
             const completedLessonIds = completedLessons.map(lesson => lesson.id);
             const newCompletedLessonIds = [...studentCompletedLessons, ...completedLessonIds];
             const uniqueCompletedLessonIds = Array.from(new Set(newCompletedLessonIds));
-            const updatedCourseLessons = selectedCourse.lessons.filter(lesson =>
+            const updatedCourseLessons = selectedStudentCourse.courseLessons.filter(lesson =>
               uniqueCompletedLessonIds.includes(lesson.id)
             );
   
@@ -56,15 +54,15 @@ export const StudentsPage: React.FC = () => {
           return course;
         });
   
-        if (selectedCourse) {
-          const isCourseSelected = !existingCourses.some(course => course.id === selectedCourse.id);
+        if (selectedStudentCourse) {
+          const isCourseSelected = !existingCourses.some(course => course.id === selectedStudentCourse.id);
           if (isCourseSelected) {
             return {
               ...studentItem,
               courses: [
                 ...updatedStudentCourses,
                 {
-                  ...selectedCourse,
+                  ...selectedStudentCourse,
                   completedLessons,
                 } as Course
               ],
@@ -92,7 +90,7 @@ export const StudentsPage: React.FC = () => {
   
   
   const handleSelectCourse = (course: Course) => {
-    dispatch( startSelectCourse(course) );
+    dispatch( startSelectStudentCourse(course) );
   }
 
   const handleSelectLessons = (lessons: Lesson[]) => {

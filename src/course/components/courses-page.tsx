@@ -1,21 +1,68 @@
 import { Box, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { ColumnLayout } from '../../shared/layout/column-layout';
-import { addNewEmptyCourseWithNameObjectives } from '../../store/course';
-import { Course } from '../entities';
-import { AddCourseForm, CoursesList } from './';
+import { addNewEmptyCourseWithNameObjectives, startAddNewLesson, startDeleteCourseById, startDeleteLesson, startSelectCourse, startSetCourseLessons, startSetCourses } from '../../store/course';
+import { Course, Lesson } from '../entities';
+import { AddCourseForm, CoursesList, CourseView } from './';
 
 export const CoursesPage: React.FC = () => {
 
   const dispatch = useAppDispatch();
 
-  const { courses } = useAppSelector(state => state.course);
+  const { courseLessons, courses, selectedCourse } = useAppSelector(state => state.course);
 
   const onAddCourseHandler = (name: string, objectives: string) => {
-    const courseInstance = new Course(name, objectives);
-    const courseObject = courseInstance.toObject();
-    dispatch( addNewEmptyCourseWithNameObjectives(courseObject) );
+    dispatch( addNewEmptyCourseWithNameObjectives(new Course(name, objectives)) );
+    dispatch( startSelectCourse(null) );
+    dispatch( startSetCourseLessons([]) );
   };
+
+  const courseDuration = courseLessons.reduce((acc, curr) => { return acc + Number(curr.duration) }, 0);
+
+  const handleSaveCourse = (course: Partial<Course>) => {
+    if (!selectedCourse) return;
+    const updatedCourses: Course[] = courses.map(c => {
+      if (c.id === selectedCourse.id) {
+        return {
+          ...c,
+          ...course,
+          courseLessons,
+          duration: courseDuration,
+        };
+      }
+      return c;
+    });
+    const updatedCourse = updatedCourses.find(c => c.id === selectedCourse.id);
+
+    if (updatedCourse) {
+      dispatch( startSelectCourse(updatedCourse) );
+    }
+    dispatch( startSetCourses( updatedCourses ) );
+  };
+
+  const handleAddLesson = (lesson: Partial<Lesson>) => {
+    dispatch( startAddNewLesson(lesson) );
+  }
+
+  const handleDeleteCourse = () => {
+    if (selectedCourse) {
+      dispatch( startDeleteCourseById(selectedCourse.id.toLocaleString()) );
+    }
+  }
+
+  const handleDeleteLesson = (id: number) => {
+    const updatedCourses: Course[] = courses.map(c => {
+      if (c.id === selectedCourse?.id) {
+        return {
+          ...c,
+          courseLessons,
+        };
+      }
+      return c;
+    });
+    dispatch( startDeleteLesson(id) );
+    dispatch( startSetCourses( updatedCourses ) );
+  }
 
   return (
     <ColumnLayout>
@@ -45,6 +92,23 @@ export const CoursesPage: React.FC = () => {
             ) : ''
           }
         </Box>
+        {
+          selectedCourse?.id ? (
+            <ColumnLayout>
+              <Box sx={{ flexGrow: 1, p: { sm: '100px'}, maxWidth: 800, width: 'calc( 100% - 200px)' }}>
+                <CourseView
+                  { ...selectedCourse }
+                  duration={ courseDuration?.toLocaleString() || '0' }
+                  sinceDate={ selectedCourse.sinceDate }
+                  onAddLesson={ handleAddLesson }
+                  onDeleteCourse={ handleDeleteCourse }
+                  onDeleteLesson={ handleDeleteLesson }
+                  onSaveCourse={ handleSaveCourse }
+                />
+              </Box>
+            </ColumnLayout>
+          ) : ''
+        }
       </ColumnLayout>
     </ColumnLayout>
   );

@@ -1,19 +1,32 @@
 import { Card, CardContent, CardHeader, Button, Typography } from '@mui/material';
 import { PersonOutline } from '@mui/icons-material';
-import { Course } from '../../course';
+import { Course, Lesson } from '../../course';
 import { EditCourseForm } from './';
 
 interface CourseViewProps {
+  duration: string;
   name: string;
   objectives: string;
+  sinceDate: string;
+  onAddLesson: (lesson: Partial<Lesson>) => void;
   onDeleteCourse: () => void;
+  onDeleteLesson: (id: number) => void;
   onSaveCourse: (course: Partial<Course>) => void;
 }
 
-export const CourseView: React.FC<CourseViewProps> = ({ name, objectives, onDeleteCourse, onSaveCourse }) => {
+export const CourseView: React.FC<CourseViewProps> = ({ duration, name, objectives, onAddLesson, onDeleteCourse, onDeleteLesson, onSaveCourse }) => {
+  
+  const handleAddLesson = (lesson: Partial<Lesson>) => {
+    onAddLesson(lesson);
+  }
+  
   const handleDeleteClick = () => {
     onDeleteCourse();
   };
+
+  const handleDeleteLesson = (id: number) => {
+    onDeleteLesson(id);
+  }
 
   const handleSaveClick = (course: Partial<Course>) => {
     onSaveCourse(course);
@@ -37,7 +50,10 @@ export const CourseView: React.FC<CourseViewProps> = ({ name, objectives, onDele
         subheader={ objectives }
       />
       <CardContent>
+        <Typography variant="body2" display="block" gutterBottom>Duration { duration } hours</Typography>
         <EditCourseForm
+          onAddLesson={ handleAddLesson }
+          onDeleteLesson={ handleDeleteLesson }
           onEditCourse={ handleSaveClick }
         />
       </CardContent>
