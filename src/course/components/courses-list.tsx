@@ -16,7 +16,7 @@ export const CoursesList: React.FC<{ courses: Course[] }> = () => {
 
   const getNumberOfStudentsCourse = ( id: number ) => students.filter(s => s.courses?.some(c => c.id === id && c.courseLessons.every(l => l.id))).length;
 
-  const getTimesCompletedCourse = ( id: number ) => students.filter(s => s.courses?.some(c => c.id === id && c.completed)).length;
+  const getTimesCompletedCourse = ( id: number ) => students.filter(s => s.courses?.some(c => c.id === id && c.completedLessons.length === c.courseLessons.length)).length;
 
   const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
     const course: Course | undefined = courses.find(c => c.id.toLocaleString() === id);
@@ -34,16 +34,7 @@ export const CoursesList: React.FC<{ courses: Course[] }> = () => {
     setOrderBy(property);
   };
 
-  const coursesIncludesCompleted = courses.map(course => {
-    const completedLessons = students.map(student => student.courses?.find(c => c.id === course.id)?.completedLessons);
-    const courseLessons = students.map(student => student.courses?.find(c => c.id === course.id)?.courseLessons);
-    return {
-      ...course,
-      completed: completedLessons.length === courseLessons.length,
-    };
-  });
-
-  const sortedCourses = coursesIncludesCompleted.slice().sort((a, b) => {
+  const sortedCourses = courses.slice().sort((a, b) => {
     const isAsc = order === 'asc';
     if (orderBy === 'name') {
       return isAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);

@@ -38,6 +38,12 @@ export const startSetActiveCourse = (course: Course) => {
   }
 }
 
+export const startSetCompletedLessons = (lessons: Lesson[]) => {
+  return ( dispatch: Dispatch ) => {
+    dispatch( setCompletedLessons(lessons) );
+  }
+}
+
 export const startSetCourses = (courses: Partial<Course>[]) => {
   return ( dispatch: Dispatch ) => {
     dispatch( setCourses(courses) );
@@ -47,11 +53,5 @@ export const startSetCourses = (courses: Partial<Course>[]) => {
 export const startSetCourseLessons = (lessons: Lesson[]) => {
   return ( dispatch: Dispatch ) => {
     dispatch( setCourseLessons(lessons) );
-  }
-}
-
-export const startSetCompletedLessons = (lessons: Lesson[]) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( setCompletedLessons(lessons) );
   }
 }
