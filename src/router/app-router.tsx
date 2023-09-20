@@ -7,7 +7,7 @@ export const AppRouter = () => {
     <Routes>
       <Route path="courses" element={ <CoursesPage /> } />
       <Route path="students" element={ <StudentsPage /> } />
-      <Route path="/*" element={ <StudentsPage /> } />
+      <Route path="/*" element={ <CoursesPage /> } />
     </Routes>
   )
 }

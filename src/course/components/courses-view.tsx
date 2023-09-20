@@ -47,7 +47,7 @@ export const CourseView: React.FC<CourseViewProps> = ({ duration, name, objectiv
             Delete course
           </Button>
         }
-        title={ <Typography variant="h2" component='h4'>{ name }</Typography> }
+        title={ <Typography variant="h2" component='h4' sx={{ mb: 2 }}>{ name }</Typography> }
         subheader={ objectives }
       />
       <CardContent sx={{ pt: 0 }}>

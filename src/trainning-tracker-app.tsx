@@ -32,7 +32,7 @@ export const TrainningTrackerApp: React.FC = () => {
     },});
 
   useEffect(() => {
-    const tab = tabs.find(t => t.path === location.pathname) || tabs[1];
+    const tab = tabs.find(t => t.path === location.pathname) || tabs[0];
     setValue(tab.value);
   }, [location.pathname, value]);
 

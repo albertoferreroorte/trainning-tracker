@@ -16,7 +16,7 @@ export const CoursesList: React.FC<{ courses: Course[] }> = () => {
 
   const getNumberOfStudentsCourse = ( id: number ) => students.filter(s => s.courses?.some(c => c.id === id && c.courseLessons.every(l => l.id))).length;
 
-  const getTimesCompletedCourse = ( id: number ) => students.filter(s => s.courses?.some(c => c.id === id && c.completedLessons.length === c.courseLessons.length)).length;
+  const getTimesCompletedCourse = ( id: number ) => students.filter(s => s.courses?.some(c => c.id === id && c.courseLessons.length > 0 && c.completedLessons.length === c.courseLessons.length)).length;
 
   const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
     const course: Course | undefined = courses.find(c => c.id.toLocaleString() === id);

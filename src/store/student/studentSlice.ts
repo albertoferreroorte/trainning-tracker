@@ -38,14 +38,6 @@ export const studentSlice = createSlice({
       setStudents: (state, action) => {
         state.students = action.payload;
       },
-      updateStudent: (state, action) => {
-        state.students = state.students.map(student => {
-          if (student.id === action.payload?.id) {
-            return action.payload;
-          }
-          return student;
-        });
-      },
       selectStudent: (state, action) => {
         state.selected = action.payload;
       }
@@ -59,5 +51,4 @@ export const {
   selectStudent,
   selectStudentCourse,
   setStudents,
-  updateStudent,
 } = studentSlice.actions;
