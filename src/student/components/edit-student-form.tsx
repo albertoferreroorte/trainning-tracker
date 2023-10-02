@@ -2,67 +2,68 @@ import { useEffect, useState } from 'react';
 import { PersonOutline } from '@mui/icons-material';
 import { Button, Checkbox, FormControl, Grid, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import { Course, Lesson } from '../../course';
-import { useAppSelector, useForm } from '../../shared/hooks';
+import { useForm } from '../../shared/hooks';
 import { Student } from '../entities';
 
 const setSelectLessonTitle = ( index: number, title: string ) => ( `${index}. ${title}`);
 
 export const EditStudentForm: React.FC<{
+  courses: Course[];
+  lessons: Lesson[];
   onEditStudent: (student: Partial<Student>) => void,
-  onSelectCourse: (course: Course) => void,
-  onSelectLessons: (lesson: Lesson[]) => void,
-}> = ({ onEditStudent, onSelectCourse, onSelectLessons }) => {
+  onSelectCourse: (course: number) => void,
+  onSelectLessonIds: (lessonIds: number[]) => void,
+  onSetLessonIds: (lessons: number[]) => void,
+  selectedCourseId: number | null;
+  selectedLessonIds: number[];
+  selectedStudent: Student | null;
+}> = ({ courses, lessons, onEditStudent, onSelectCourse, onSelectLessonIds, onSetLessonIds, selectedCourseId, selectedLessonIds, selectedStudent }) => {
 
-  const { selected, selectedStudentCourse, students } = useAppSelector(state => state.student);
+  const { formState, setFormState, onInputChange } = useForm({ ...selectedStudent });
 
-  const { courses } = useAppSelector(state => state.course);
+  const updatedLessons = lessons.filter(lesson => selectedLessonIds.includes(lesson.id));
+  const lessonsStringFormat = updatedLessons.map(lesson => lesson.title);
 
-  const { formState, setFormState, onInputChange } = useForm({ ...selected });
-
-  const studentCompleteLessons = students.find(s => s.id === selected?.id)?.courses?.find(c => c.id === selectedStudentCourse?.id)?.completedLessons;
-  const studentCompleteLessonsByString = studentCompleteLessons?.map(l => l.title);
-  const [selectedLessons, setSelectedLessons] = useState<string[]>(studentCompleteLessonsByString || []);
+  const [selectedStudentLessons, setStudentSelectedLessons] = useState<string[]>([]);
 
   useEffect(() => {
-    if (selected) {
+    setStudentSelectedLessons(lessonsStringFormat);
+  }, [selectedCourseId]);
+
+  useEffect(() => {
+    if (selectedStudent) {
       setFormState({
-        courses: selected.courses,
-        fullName: selected.fullName || '',
-        jobPosition: selected.jobPosition || '',
+        id: selectedStudent.id || 0,
+        fullName: selectedStudent.fullName || '',
+        jobPosition: selectedStudent.jobPosition || '',
       });
     }
-  }, [setFormState, selected]);
+  }, [ lessons, setFormState, selectedStudent]);
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-
     if (formState.fullName?.trim().length === 0) return;
-    
-    onEditStudent({ fullName: formState.fullName, jobPosition: formState.jobPosition });
+    onEditStudent({ ...selectedStudent, fullName: formState.fullName, id: formState.id, jobPosition: formState.jobPosition });
   }
 
   const handleSelectCourse = (event: SelectChangeEvent) => {
-    const courseId = Number(event.target.value.replace(/,/g, ''));
-    const course = courses?.find(c => c.id === courseId);
+    const id = Number(event.target.value.replace(/,/g, ''));
+    const course = courses?.find(c => c.id === id);
     if (!course) return;
-    onSelectCourse(course);
-    const student = students.find(s => s.id === selected?.id)?.courses?.find(c => c.id === course.id);
-    const studentCompletedLessons = student?.completedLessons.map(l => l.title) || []
-    setSelectedLessons(studentCompletedLessons);
-    const lessons = student?.completedLessons.filter(l => selectedLessons.includes(l.title)) || [];
-    onSelectLessons(lessons);
+    onSelectCourse(course.id);
+    onSetLessonIds(course.courseLessonIds);
   }
 
-  const handleSelectLesson = (event: SelectChangeEvent<typeof selectedLessons>) => {
+  const handleSelectLesson = (event: SelectChangeEvent<typeof selectedStudentLessons>) => {
     const {
       target: { value },
     } = event;
-    setSelectedLessons(
+    setStudentSelectedLessons(
       typeof value === 'string' ? value.split(',') : value,
     );
-    const lessons = courses.flatMap(c => c.courseLessons.filter(l => event.target.value.includes(l.title)));
-    if (!lessons) return;
-    onSelectLessons(lessons);
+    const updatedLessons = lessons.filter(lesson => event.target.value.includes(lesson.title.toLocaleString())).map(lesson => lesson.id);
+    if (!updatedLessons) return;
+    onSelectLessonIds(updatedLessons);
   }
 
   return (
@@ -97,7 +98,7 @@ export const EditStudentForm: React.FC<{
             labelId='course-selection'
             name="select-course"
             onChange={ handleSelectCourse }
-            value={ selectedStudentCourse?.id.toLocaleString() ?? '0'}
+            value={ selectedCourseId?.toLocaleString() ?? '0'}
           >
             <MenuItem value="0"></MenuItem>
             {
@@ -108,7 +109,7 @@ export const EditStudentForm: React.FC<{
           </Select>
         </FormControl>
         {
-          selectedStudentCourse?.courseLessons && (
+          lessons.length > 0 && (
             <FormControl fullWidth sx={{ mb: 2, maxWidth: 500 }}>
               <InputLabel id="lesson-selection">
                 Select completed lessons
@@ -120,13 +121,13 @@ export const EditStudentForm: React.FC<{
                 name="select-lesson"
                 onChange={ handleSelectLesson }
                 renderValue={(selected) => selected.join(', ')}
-                value={ selectedLessons }
+                value={ selectedStudentLessons }
               >
                 {
-                  selectedStudentCourse?.courseLessons.map((lesson: Lesson, index: number) => {
+                  lessons.map((lesson: Lesson, index: number) => {
                     const title = setSelectLessonTitle(index + 1, lesson.title);
                     return (<MenuItem key={ lesson.id } value={ lesson.title }>
-                      <Checkbox checked={ selectedLessons.indexOf(lesson.title) > -1 } />
+                      <Checkbox checked={  selectedStudentLessons.indexOf(lesson.title) > -1 } />
                       <ListItemText primary={ title } />
                     </MenuItem>);
                   })

@@ -1,9 +1,7 @@
 import { Box, Typography } from '@mui/material';
-import { Course, Lesson } from '../../course';
-import { useAppDispatch, useAppSelector } from '../../shared/hooks';
+import { useAppDispatch, useCompletedLessons, useCourses, useLessons, useSelectedStudent, useStudents } from '../../shared/hooks';
 import { ColumnLayout } from '../../shared/layout/column-layout';
-import { addNewEmptyStudentWithNamePosition, selectStudent, startDeleteStudentById, startSelectStudentCourse, startSetStudents } from '../../store';
-import { startSelectCourse, startSetCompletedLessons } from '../../store/course';
+import { startAddStudent, startDeleteStudent, startSelectStudent, startSelectStudentCourse, startSelectStudentLessons, startSetStudentCourseLessons, startUpdateStudent } from '../../store/student';
 import { Student } from '../entities/student';
 import { AddStudentForm } from './add-student-form';
 import { StudentView } from './student-view';
@@ -11,90 +9,44 @@ import { StudentsList } from './students-list';
 
 export const StudentsPage: React.FC = () => {
 
-  const { completedLessons } = useAppSelector(state => state.course);
-
-  const { selected, selectedStudentCourse, students } = useAppSelector(state => state.student);
-
   const dispatch = useAppDispatch();
+  const { courses } = useCourses();
+  const { selectedStudentId, selectedStudentCourseId, students } = useStudents();
+  const { selectedStudent } = useSelectedStudent(selectedStudentId ?? 0);
+  const { lessons } = useLessons(selectedStudentCourseId ?? 0);
+  const { completedLessons } = useCompletedLessons(selectedStudent?.id ?? 0, selectedStudentCourseId ?? 0);
 
   const onAddStudentHandler = (name: string, position: string) => {
-    dispatch( addNewEmptyStudentWithNamePosition(new Student(name, position)) );
-    dispatch( selectStudent(null) );
-    dispatch( startSelectCourse(null) );
+    const newStudent = new Student(name, position, []);
+    dispatch( startAddStudent(newStudent) );
   };
 
   const handleDeleteStudent = () => {
-    if (!selected) return;
-    dispatch( selectStudent({ selected }) );
-    dispatch( startDeleteStudentById(selected.id) );
+    if (!selectedStudent?.id) return;
+    dispatch( startDeleteStudent(selectedStudent.id) );
   };
 
   const handleSaveStudent = (student: Partial<Student>) => {
-    if (!selected) return;
-  
-    const updatedStudents: Partial<Student>[] = students.map(studentItem => {
-      if (studentItem.id === selected.id) {
-        const existingCourses = studentItem.courses || [];
-        const updatedStudentCourses: Course[] = existingCourses.map(course => {
-          if (selectedStudentCourse && course.id === selectedStudentCourse.id) {
-            const studentCompletedLessons = completedLessons.map(lesson => lesson.id);
-            const completedLessonIds = completedLessons.map(lesson => lesson.id);
-            const newCompletedLessonIds = [...studentCompletedLessons, ...completedLessonIds];
-            const uniqueCompletedLessonIds = Array.from(new Set(newCompletedLessonIds));
-            const updatedCourseLessons = selectedStudentCourse.courseLessons.filter(lesson =>
-              uniqueCompletedLessonIds.includes(lesson.id)
-            );
-            const completed = completedLessons.length === selectedStudentCourse.courseLessons.length;
-            return {
-              ...course,
-              completed,
-              completedLessons: updatedCourseLessons,
-            } as Course;
-          }
-          return course;
-        });
-  
-        if (selectedStudentCourse) {
-          const isCourseSelected = !existingCourses.some(course => course.id === selectedStudentCourse.id);
-          if (isCourseSelected) {
-            return {
-              ...studentItem,
-              courses: [
-                ...updatedStudentCourses,
-                {
-                  ...selectedStudentCourse,
-                  completedLessons,
-                } as Course
-              ],
-              fullName: student.fullName || studentItem.fullName,
-              jobPosition: student.jobPosition || studentItem.jobPosition,
-            };
-          }
-        }
-  
-        return {
-          ...studentItem,
-          courses: updatedStudentCourses,
-          fullName: student.fullName || studentItem.fullName,
-          jobPosition: student.jobPosition || studentItem.jobPosition,
-        };
-      }
-  
-      return studentItem;
-    });
-  
-    const updatedStudent = updatedStudents.find(s => s.id === selected.id);
-    if (updatedStudent) dispatch( selectStudent(updatedStudent) );
-    dispatch( startSetStudents(updatedStudents) );
+    if (selectedStudentCourseId && selectedStudent?.id && student.id) {
+      dispatch( startUpdateStudent(selectedStudent.id, selectedStudentCourseId) );
+    }
   };
   
-  
-  const handleSelectCourse = (course: Course) => {
+  const handleSelectCourse = (course: number) => {
     dispatch( startSelectStudentCourse(course) );
   }
 
-  const handleSelectLessons = (lessons: Lesson[]) => {
-    dispatch( startSetCompletedLessons(lessons) );
+  const handleSelectLessonIds = (lessonIds: number[]) => {
+    if (!selectedStudentCourseId || !selectedStudent?.id) return;
+    dispatch( startSelectStudentLessons(selectedStudentCourseId, lessonIds, selectedStudent.id) );
+  }
+
+  const handleSelectStudent = (student: Student) => {
+    dispatch( startSelectStudent(student.id) );
+  }
+
+  const handleSetLessons = (lessons: number[]) => {
+    dispatch(startSetStudentCourseLessons(lessons));
   }
 
   return (
@@ -113,7 +65,7 @@ export const StudentsPage: React.FC = () => {
             sx={{ my: 3 }}
           >
             {
-              !students.length ? (
+              !students?.length ? (
                 <Typography fontSize={ 30 } sx={{ mr: 3, opacity: 0.75 }}>No</Typography>
               ) : ''
             }
@@ -121,21 +73,33 @@ export const StudentsPage: React.FC = () => {
           </Typography>
           {
             students.length ? (
-              <StudentsList students={ students } />
+              <StudentsList
+                onSelectStudent={ handleSelectStudent }
+                selectedStudent={ selectedStudent ?? null }
+                students={ students }
+              />
             ) : ''
           }
         </Box>
         {
-          selected?.id ? (
+          selectedStudent ? (
             <ColumnLayout>
               <Box sx={{ flexGrow: 1, p: { sm: '100px'}, maxWidth: 800, width: 'calc( 100% - 200px)' }}>
                 <StudentView
-                  { ...selected }
-                  sinceDate={ selected.sinceDate }
+                  { ...selectedStudent }
+                  courses={ courses }
+                  fullName={ selectedStudent?.fullName || '' }
+                  jobPosition={ selectedStudent?.jobPosition || '' }
+                  lessons={ lessons }
                   onDeleteStudent={ handleDeleteStudent }
                   onSaveStudent={ handleSaveStudent }
                   onSelectCourse={ handleSelectCourse }
-                  onSelectLessons={ handleSelectLessons }
+                  onSelectLessonIds={ handleSelectLessonIds }
+                  onSetLessonIds={ handleSetLessons }
+                  selectedCourseId={ selectedStudentCourseId ?? null }
+                  selectedLessonIds={ completedLessons.map(lesson => lesson.id) || [] }
+                  selectedStudent={ selectedStudent }
+                  sinceDate={ selectedStudent?.sinceDate || 0 }
                 />
               </Box>
             </ColumnLayout>

@@ -1,57 +1,53 @@
-import { Dispatch } from '@reduxjs/toolkit';
+import { Dispatch, Update } from '@reduxjs/toolkit';
 import { Course, Lesson } from '../../course';
-import { addLesson, addNewEmptyCourse, deleteCourseById, deleteLessonById, selectCourse, setActiveCourse, setCompletedLessons, setCourseLessons, setCourses } from './course-slice';
+import { RootState } from '../store';
+import { addCourse, addLessonToCourse, deleteCourse, selectCourse, updateCourse } from './course-slice';
 
-export const addNewEmptyCourseWithNameObjectives = (newCourse: Partial<Course>) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( addNewEmptyCourse(newCourse) );
-  }
-}
+export const startAddNewCourse = (course: Course) => {
+  return (dispatch: Dispatch) => {
+    dispatch(addCourse(course));
+  };
+};
 
-export const startAddNewLesson = (lesson: Partial<Lesson>) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( addLesson(lesson) );
-  }
-}
+export const startAddLessonToCourse = (courseId: number, newLesson: Lesson, existingLessonIds: number[]) => {
+  return (dispatch: Dispatch, getState: () => RootState) => {
+    const course = getState().course.entities[courseId];
+    if (course) {
+      const lesson = getState().lesson.entities[newLesson.id];
+      if (lesson) {
+        dispatch(addLessonToCourse({ courseId, lessonId: newLesson.id }));
+      }
+      existingLessonIds.forEach(lessonId => {
+        const existingLesson = getState().lesson.entities[lessonId];
+        if (existingLesson) {
+          dispatch(addLessonToCourse({ courseId, lessonId }));
+        }
+      });
+    }
+  };
+};
 
-export const startDeleteCourseById = (id: number) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( deleteCourseById(id) );
-  }
-}
+export const startDeleteCourse = (id: number) => {
+  return (dispatch: Dispatch) => {
+    dispatch(deleteCourse(id));
+  };
+};
 
-export const startDeleteLesson = (id: number) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( deleteLessonById(id) );
-  }
-}
+export const startSelectCourse = (course: number) => {
+  return (dispatch: Dispatch) => {
+    dispatch(selectCourse(course));
+  };
+};
 
-export const startSelectCourse = (course: Partial<Course> | null) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( selectCourse(course) );
-  }
-}
-
-export const startSetActiveCourse = (course: Course) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( setActiveCourse(course) );
-  }
-}
-
-export const startSetCompletedLessons = (lessons: Lesson[]) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( setCompletedLessons(lessons) );
-  }
-}
-
-export const startSetCourses = (courses: Partial<Course>[]) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( setCourses(courses) );
-  }
-}
-
-export const startSetCourseLessons = (lessons: Lesson[]) => {
-  return ( dispatch: Dispatch ) => {
-    dispatch( setCourseLessons(lessons) );
-  }
-}
+export const startUpdateCourse = (course: Partial<Course>) => {
+  return (dispatch: Dispatch, getState: () => RootState) => {
+    const selectedCourseId = getState().course.selectedCourseId;
+    if (selectedCourseId) {
+      const updatedCourse: Update<Course> = {
+        id: selectedCourseId,
+        changes: course,
+      };
+      dispatch(updateCourse(updatedCourse));
+    }
+  };
+};

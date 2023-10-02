@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { courseSlice } from './course/course-slice';
+import { lessonSlice } from './lesson';
 import { studentSlice } from './student';
 
 export const store = configureStore({
@@ -8,6 +9,7 @@ export const store = configureStore({
   }),
   reducer: {
     course: courseSlice.reducer,
+    lesson: lessonSlice.reducer,
     student: studentSlice.reducer,
   },
 });

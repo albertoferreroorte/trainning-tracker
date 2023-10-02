@@ -5,19 +5,22 @@ import { EditCourseForm } from './';
 import { format, parseISO } from 'date-fns';
 
 interface CourseViewProps {
+  courses: Course[];
   duration: string;
+  lessons: Lesson[];
   name: string;
   objectives: string;
-  sinceDate: string;
-  onAddLesson: (lesson: Partial<Lesson>) => void;
+  onAddLesson: (lesson: Lesson) => void;
   onDeleteCourse: () => void;
   onDeleteLesson: (id: number) => void;
   onSaveCourse: (course: Partial<Course>) => void;
+  selectedCourse: Course | null;
+  sinceDate: string;
 }
 
-export const CourseView: React.FC<CourseViewProps> = ({ duration, name, objectives, sinceDate, onAddLesson, onDeleteCourse, onDeleteLesson, onSaveCourse }) => {
+export const CourseView: React.FC<CourseViewProps> = ({ courses, duration, lessons, name, objectives, onAddLesson, onDeleteCourse, onDeleteLesson, onSaveCourse, selectedCourse, sinceDate }) => {
   
-  const handleAddLesson = (lesson: Partial<Lesson>) => {
+  const handleAddLesson = (lesson: Lesson) => {
     onAddLesson(lesson);
   }
   
@@ -54,9 +57,12 @@ export const CourseView: React.FC<CourseViewProps> = ({ duration, name, objectiv
         <Typography variant="body2" display="block">Created { format(parseISO(sinceDate), 'LLLL yyyy') } </Typography>
         <Typography variant="body2" display="block" gutterBottom>Duration { duration } hours</Typography>
         <EditCourseForm
+          courses={ courses }
+          lessons={ lessons }
           onAddLesson={ handleAddLesson }
           onDeleteLesson={ handleDeleteLesson }
           onEditCourse={ handleSaveClick }
+          selectedCourse={ selectedCourse }
         />
       </CardContent>
     </Card>

@@ -1,18 +1,24 @@
-import { Course } from '../../course';
-
 export class Student {
-  courses?: Course[] | null;
+  completedLessons: number[];
+  courseIds: number[];
   fullName: string;
   id: number;
   jobPosition: string;
-  sinceDate: string;
+  sinceDate: number;
+  studentCourses: StudentCourses;
 
-  constructor(fullName: string, jobPosition: string, courses?: Course[]) {
-    this.courses = courses;
-    this.fullName = fullName;
+  constructor(fullName: string, jobPosition: string, courseIds: number[] = [], studentCourses: StudentCourses = {}) {
+    this.completedLessons = [];
+    this.courseIds = courseIds;
+    this.fullName = fullName || '';
     this.id = new Date().getTime();
-    this.jobPosition = jobPosition;
-    this.sinceDate = new Date().toISOString();
+    this.jobPosition = jobPosition || '';
+    this.sinceDate = new Date().getTime();
+    this.studentCourses = studentCourses;
   }
 
+}
+
+export interface StudentCourses {
+  [courseId: number]: number[];
 }

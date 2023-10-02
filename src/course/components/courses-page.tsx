@@ -1,7 +1,8 @@
 import { Box, Typography } from '@mui/material';
-import { useAppDispatch, useAppSelector } from '../../shared/hooks';
+import { useAppDispatch, useCourses, useLessons } from '../../shared/hooks';
 import { ColumnLayout } from '../../shared/layout/column-layout';
-import { addNewEmptyCourseWithNameObjectives, startAddNewLesson, startDeleteCourseById, startDeleteLesson, startSelectCourse, startSetCourseLessons, startSetCourses } from '../../store/course';
+import { startAddLessonToCourse, startAddNewCourse, startDeleteCourse, startUpdateCourse } from '../../store/course';
+import { startAddNewLesson, startDeleteLesson } from '../../store/lesson';
 import { Course, Lesson } from '../entities';
 import { AddCourseForm, CoursesList, CourseView } from './';
 
@@ -9,61 +10,35 @@ export const CoursesPage: React.FC = () => {
 
   const dispatch = useAppDispatch();
 
-  const { completedLessons, courseLessons, courses, selectedCourse } = useAppSelector(state => state.course);
+  const { courses, courseLessonIds, selectedCourse } = useCourses();
+
+  const { lessons } = useLessons( selectedCourse?.id ?? 0 );
 
   const onAddCourseHandler = (name: string, objectives: string) => {
-    dispatch( addNewEmptyCourseWithNameObjectives(new Course(name, objectives)) );
-    dispatch( startSelectCourse(null) );
-    dispatch( startSetCourseLessons([]) );
+    dispatch( startAddNewCourse(new Course(name, objectives)) );
   };
-
-  const courseDuration = courseLessons.reduce((acc, curr) => { return acc + Number(curr.duration) }, 0);
 
   const handleSaveCourse = (course: Partial<Course>) => {
-    if (!selectedCourse) return;
-    const updatedCourses: Course[] = courses.map(c => {
-      if (c.id === selectedCourse.id) {
-        return {
-          ...c,
-          ...course,
-          completedLessons,
-          courseLessons,
-          duration: courseDuration,
-        };
-      }
-      return c;
-    });
-    const updatedCourse = updatedCourses.find(c => c.id === selectedCourse.id);
-
+    const updatedCourse = courses.find(course => course.id === selectedCourse?.id);
     if (updatedCourse) {
-      dispatch( startSelectCourse(updatedCourse) );
+      dispatch( startUpdateCourse({ ...course, ...updatedCourse }) );
     }
-    dispatch( startSetCourses( updatedCourses ) );
   };
 
-  const handleAddLesson = (lesson: Partial<Lesson>) => {
+  const handleAddLesson = (lesson: Lesson) => {
     dispatch( startAddNewLesson(lesson) );
-  }
+    dispatch(startAddLessonToCourse(selectedCourse?.id ?? 0, lesson, courseLessonIds));
+  };
 
   const handleDeleteCourse = () => {
-    if (selectedCourse) {
-      dispatch( startDeleteCourseById(selectedCourse.id) );
+    if (selectedCourse?.id) {
+      dispatch( startDeleteCourse(selectedCourse.id) );
     }
-  }
+  };
 
   const handleDeleteLesson = (id: number) => {
-    const updatedCourses: Course[] = courses.map(c => {
-      if (c.id === selectedCourse?.id) {
-        return {
-          ...c,
-          courseLessons,
-        };
-      }
-      return c;
-    });
     dispatch( startDeleteLesson(id) );
-    dispatch( startSetCourses( updatedCourses ) );
-  }
+  };
 
   return (
     <ColumnLayout>
@@ -89,7 +64,10 @@ export const CoursesPage: React.FC = () => {
           </Typography>
           {
             courses.length ? (
-              <CoursesList courses={ courses } />
+              <CoursesList
+                courses={ courses }
+                selectedCourse={ selectedCourse ?? null }
+              />
             ) : ''
           }
         </Box>
@@ -98,13 +76,17 @@ export const CoursesPage: React.FC = () => {
             <ColumnLayout>
               <Box sx={{ flexGrow: 1, p: { sm: '100px'}, maxWidth: 800, width: 'calc( 100% - 200px)' }}>
                 <CourseView
-                  { ...selectedCourse }
-                  duration={ courseDuration?.toLocaleString() || '0' }
-                  sinceDate={ selectedCourse.sinceDate }
+                  courses={ courses }
+                  name={ selectedCourse?.name || '' }
+                  duration={ selectedCourse?.duration?.toLocaleString() || '0' }
+                  lessons={ lessons }
+                  objectives={ selectedCourse?.objectives || '' }
                   onAddLesson={ handleAddLesson }
                   onDeleteCourse={ handleDeleteCourse }
                   onDeleteLesson={ handleDeleteLesson }
                   onSaveCourse={ handleSaveCourse }
+                  selectedCourse={ selectedCourse }
+                  sinceDate={ selectedCourse?.sinceDate || '' }
                 />
               </Box>
             </ColumnLayout>

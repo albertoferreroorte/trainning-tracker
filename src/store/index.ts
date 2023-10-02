@@ -1,2 +1,2 @@
-export * from './student';
+export * from './selectors';
 export * from './store';

@@ -1,65 +1,56 @@
-import { useState } from 'react';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Typography } from '@mui/material';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { Course } from '../entities';
-import { startSelectCourse, startSetCourseLessons } from '../../store/course';
-import { format, parseISO } from 'date-fns';
+import { startSelectCourse } from '../../store/course';
+import { getNumberOfStudentsCourse, getTimesCompletedCourse, RootState } from '../../store';
 
-export const CoursesList: React.FC<{ courses: Course[] }> = () => {
+interface CourseRowProps {
+  course: Course;
+  isSelected: (id: string) => boolean;
+  onSelectionChange: (id: number) => void;
+}
+
+const CourseRow: React.FC<CourseRowProps> = ({ course, isSelected, onSelectionChange }) => {
+  const attendances = useAppSelector((state: RootState) => getNumberOfStudentsCourse(state, course.id));
+  const completions = useAppSelector((state: RootState) => getTimesCompletedCourse(state, course.id));
+  return (
+    <TableRow
+      key={`${course.id}${course.name}`}
+      onClick={() => onSelectionChange(course.id)}
+      selected={isSelected(course.id?.toLocaleString())}
+      sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer', verticalAlign: 'top' }}
+    >
+      <TableCell>{ course.name }</TableCell>
+      <TableCell>{ course.sinceDate }</TableCell>
+      <TableCell>{ course.objectives }</TableCell>
+      <TableCell>{ course.duration }</TableCell>
+      <TableCell>{ attendances }</TableCell>
+      <TableCell>{ completions }</TableCell>
+    </TableRow>
+  );
+}
+
+export const CoursesList: React.FC<{ courses: Course[], selectedCourse: Course | null }> = ({ courses, selectedCourse }) => {
   const dispatch = useAppDispatch();
 
-  const { courses, selectedCourse } = useAppSelector(state => state.course);
-  const { students } = useAppSelector(state => state.student);
+  const coursesDict = useAppSelector((state: RootState) => state.course.entities);
+  const coursesArray = Object.values(coursesDict || {});
+  const validCourses = coursesArray.filter(Boolean);
 
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<string>('name');
-
-  const getNumberOfStudentsCourse = ( id: number ) => students.filter(s => s.courses?.some(c => c.id === id && c.courseLessons.every(l => l.id))).length;
-
-  const getTimesCompletedCourse = ( id: number ) => students.filter(s => s.courses?.some(c => c.id === id && c.courseLessons.length > 0 && c.completedLessons.length === c.courseLessons.length)).length;
-
-  const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
-    const course: Course | undefined = courses.find(c => c.id.toLocaleString() === id);
+  const handleSelectionChange = (id: number) => {
+    const course: Course | undefined = courses.find(c => c.id === id);
     if (!course) return;
-    dispatch( startSelectCourse(course) );
-    const lessons = course.courseLessons;
-    dispatch( startSetCourseLessons(lessons) );
-  };
-  
-  const isSelected = (name: string) => selectedCourse?.id.toLocaleString().indexOf(name) !== -1;
-
-  const handleRequestSort = (property: string) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
+    dispatch( startSelectCourse(course.id) );
   };
 
-  const sortedCourses = courses.slice().sort((a, b) => {
-    const isAsc = order === 'asc';
-    if (orderBy === 'name') {
-      return isAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-    }
-    return 0;
-  });
+  const isSelected = (id: string) => selectedCourse?.id.toLocaleString() === id;
 
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="courses list table">
         <TableHead>
           <TableRow>
-            <TableCell>
-              {
-                sortedCourses.length > 1
-                  ? (<TableSortLabel
-                    active={orderBy === 'name'}
-                    direction={order}
-                    onClick={() => handleRequestSort('name')}
-                  >
-                    Course
-                  </TableSortLabel>)
-                  : ( 'Course' )
-              }
-            </TableCell>
+            <TableCell>Course</TableCell>
             <TableCell>Created</TableCell>
             <TableCell>Objectives</TableCell>
             <TableCell>Duration</TableCell>
@@ -69,36 +60,17 @@ export const CoursesList: React.FC<{ courses: Course[] }> = () => {
         </TableHead>
         <TableBody>
           {
-            sortedCourses.map((course) => {
-              const isItemSelected = isSelected(course.id?.toLocaleString());
-              return (
-                <TableRow
-                  key={`${course.id}${course.name}`}
-                  onClick={(event) => handleClick(event, course.id?.toLocaleString())}
-                  selected={ isItemSelected }
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer', verticalAlign: 'top' }}
-                >
-                  <TableCell component="th" scope="row">
-                    <Typography>{ course.name }</Typography>
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    <Typography>{ format(parseISO(course.sinceDate), 'LLL yyyy') }</Typography>
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    <Typography>{ course.objectives }</Typography>
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    <Typography>{ course.duration } hours</Typography>
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    <Typography>{ getNumberOfStudentsCourse(course.id) }</Typography>
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    <Typography>{ getTimesCompletedCourse(course.id) }</Typography>
-                  </TableCell>
-                </TableRow>
-              );
-            })
+            validCourses.map((course) => course
+              ? (
+                <CourseRow 
+                  key={ course?.id } 
+                  course={ course } 
+                  isSelected={ isSelected }
+                  onSelectionChange={ handleSelectionChange }
+                />
+              )
+              : ('')
+            )
           }
         </TableBody>
       </Table>

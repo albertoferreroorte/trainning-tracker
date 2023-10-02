@@ -1,54 +1,84 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { Course } from '../../course';
+import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import { Student } from '../../student/entities';
+import { RootState } from '../store';
 
-interface StudentState {
-  selected: Student | null;
-  selectedStudentCourse: Course | null;
-  studentCourses: Course[];
-  students: Student[];
-}
-
-const initialState: StudentState = {
-  selected: null,
-  selectedStudentCourse: null,
-  studentCourses: [],
-  students: [],
+type StudentCourses = {
+  [studentId: string]: {
+    [courseId: string]: number[];
+  };
 };
 
+interface StudentState extends EntityState<Student> {
+  selectedStudentId: number | null;
+  selectedStudentCourseId: number | null,
+  selectedStudentLessonIds: number[],
+  studentCourses: StudentCourses;
+  studentCourseLessons: number[];
+}
+
+export const studentsAdapter = createEntityAdapter<Student>();
+
+const initialState: StudentState = studentsAdapter.getInitialState({
+  selectedStudentId: null,
+  selectedStudentCourseId: null,
+  selectedStudentLessonIds: [],
+  studentCourses: {},
+  studentCourseLessons: [],
+});
+
 export const studentSlice = createSlice({
-    name: 'student',
-    initialState,
-    reducers: {
-      addCourse: (state, action) => {
-        state.selected?.courses?.push(action.payload);
-      },
-      addNewEmptyStudent: (state, action) => {
-        state.students.push(action.payload);
-      },
-      deleteStudentById: (state, action) => {
-        state.selected = null;
-        state.students = state.students.filter(
-          student => student.id !== action.payload,
-        );
-      },
-      selectStudentCourse: (state, action) => {
-        state.selectedStudentCourse = action.payload;
-      },
-      setStudents: (state, action) => {
-        state.students = action.payload;
-      },
-      selectStudent: (state, action) => {
-        state.selected = action.payload;
+  name: 'student',
+  initialState,
+  reducers: {
+    addStudent: studentsAdapter.addOne,
+    deleteStudent: studentsAdapter.removeOne,
+    selectStudentId: (state, action) => {
+      state.selectedStudentId = action.payload;
+      state.selectedStudentCourseId = null;
+      state.selectedStudentLessonIds = [];
+    },
+    selectStudentCourse: (state, action) => {
+      state.selectedStudentCourseId = action.payload;
+    },       
+    selectStudentLessons: (state, action) => {
+      state.selectedStudentLessonIds = action.payload;
+    },
+    setStudentCourseCompletedLessons: (state, action) => {
+      const { studentId, courseId, lessonsIds } = action.payload;
+      if (!state.entities[studentId]) {
+        state.entities[studentId] = {
+          completedLessons: [],
+          courseIds: [],
+          id: studentId,
+          fullName: '',
+          jobPosition: '',
+          sinceDate: 0,
+          studentCourses: {}
+        };
       }
-    }
+      state.entities[studentId]!.studentCourses[courseId] = lessonsIds;
+    },
+    setStudentCourseLessons: (state, action) => {
+      state.studentCourseLessons = action.payload;
+    },
+    updateStudent: studentsAdapter.updateOne,
+  },
 });
 
 export const {
-  addCourse,
-  addNewEmptyStudent,
-  deleteStudentById,
-  selectStudent,
+  addStudent,
+  deleteStudent,
+  selectStudentId,
   selectStudentCourse,
-  setStudents,
+  selectStudentLessons,
+  setStudentCourseCompletedLessons,
+  setStudentCourseLessons,
+  updateStudent,
 } = studentSlice.actions;
+
+export const {
+  selectAll: selectAllStudents,
+  selectById: selectStudentById,
+  selectIds: selectStudentIds,
+  selectEntities: selectStudents,
+} = studentsAdapter.getSelectors((state: RootState) => state.student);

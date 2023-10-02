@@ -3,19 +3,25 @@ import { PersonOutline } from '@mui/icons-material';
 import { EditStudentForm } from './';
 import { Student } from '../entities';
 import { Course, Lesson } from '../../course';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 
 interface StudentViewProps {
+  courses: Course[];
   fullName: string;
   jobPosition: string;
-  sinceDate: string;
+  lessons: Lesson[];
+  sinceDate: number;
   onDeleteStudent: () => void;
   onSaveStudent: (student: Partial<Student>) => void;
-  onSelectCourse: (course: Course) => void;
-  onSelectLessons: (lessons: Lesson[]) => void;
+  onSelectCourse: (course: number) => void;
+  onSelectLessonIds: (lessonIds: number[]) => void;
+  onSetLessonIds: (lessonIds: number[]) => void;
+  selectedCourseId: number | null;
+  selectedLessonIds: number[];
+  selectedStudent: Student | null;
 }
 
-export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition, sinceDate, onDeleteStudent, onSaveStudent, onSelectCourse, onSelectLessons }) => {
+export const StudentView: React.FC<StudentViewProps> = ({ courses, fullName, jobPosition, lessons, sinceDate, onDeleteStudent, onSaveStudent, onSelectCourse, onSelectLessonIds, onSetLessonIds, selectedCourseId, selectedLessonIds, selectedStudent }) => {
   const handleDeleteClick = () => {
     onDeleteStudent();
   };
@@ -24,12 +30,16 @@ export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition,
     onSaveStudent(student);
   };
 
-  const handleSelectCourse = (course: Course) => {
+  const handleSelectCourse = (course: number) => {
     onSelectCourse(course);
   };
 
-  const handleSelectLessons = (lessons: Lesson[]) => {
-    onSelectLessons(lessons);
+  const handleSelectLessonIds = (lessonIds: number[]) => {
+    onSelectLessonIds(lessonIds);
+  };
+
+  const handleSetLessons = (lessonIds: number[]) => {
+    onSetLessonIds(lessonIds);
   };
 
   return (
@@ -51,11 +61,17 @@ export const StudentView: React.FC<StudentViewProps> = ({ fullName, jobPosition,
         subheader={ jobPosition }
       />
       <CardContent sx={{ marginTop: 1, paddingTop: 0 }}>
-        <Typography variant="body2" display="block" gutterBottom>Studying since { format(parseISO(sinceDate), 'LLLL yyyy') }</Typography>
+        <Typography variant="body2" display="block" gutterBottom>Studying since { format(new Date(sinceDate), 'LLL yyyy') }</Typography>
         <EditStudentForm
+          courses={ courses }
+          lessons={ lessons }
           onEditStudent={ handleSaveClick }
           onSelectCourse={ handleSelectCourse }
-          onSelectLessons={ handleSelectLessons }
+          onSelectLessonIds={ handleSelectLessonIds }
+          onSetLessonIds={ handleSetLessons }
+          selectedCourseId={ selectedCourseId }
+          selectedLessonIds={ selectedLessonIds }
+          selectedStudent={ selectedStudent }
         />
       </CardContent>
     </Card>

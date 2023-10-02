@@ -1,7 +1,7 @@
 import { Lesson } from '../../course';
 
 export const calculateCourseProgress = (lessons: Lesson[], completedLessons: Lesson[]): number => {
-  if (lessons.length === 0 || completedLessons.length === 0) {
+  if (lessons.length === 0 || completedLessons?.length === 0) {
     return 0;
   }
 
@@ -10,7 +10,7 @@ export const calculateCourseProgress = (lessons: Lesson[], completedLessons: Les
     0
   );
 
-  const totalCompletedDuration = completedLessons.reduce(
+  const totalCompletedDuration = completedLessons?.reduce(
     (acc, lesson) => acc + parseFloat(lesson.duration),
     0
   );

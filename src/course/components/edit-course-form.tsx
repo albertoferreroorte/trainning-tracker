@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react';
 import { AddCircleOutlined, PersonOutline } from '@mui/icons-material';
 import { Box, Button, Divider, Grid, TextField, Typography } from '@mui/material';
 import { Course, Lesson } from '../../course';
-import { useAppSelector, useForm } from '../../shared/hooks';
+import { useForm } from '../../shared/hooks';
 import { LessonsList } from './lessons-list';
 
 export const EditCourseForm: React.FC<{
-  onAddLesson: (lesson: Partial<Lesson>) => void,
+  courses: Course[],
+  lessons: Lesson[],
+  onAddLesson: (lesson: Lesson) => void,
   onDeleteLesson: (id: number) => void,
   onEditCourse: (course: Partial<Course>) => void,
-}> = ({ onAddLesson, onDeleteLesson, onEditCourse }) => {
-
-  const { courseLessons, selectedCourse } = useAppSelector(state => state.course);
+  selectedCourse: Course | null,
+}> = ({ lessons, onAddLesson, onDeleteLesson, onEditCourse, selectedCourse }) => {
 
   const { formState, setFormState, onInputChange } = useForm({ ...selectedCourse });
 
@@ -21,7 +22,6 @@ export const EditCourseForm: React.FC<{
   useEffect(() => {
     if (selectedCourse) {
       setFormState({
-        courseLessons: selectedCourse.courseLessons,
         name: selectedCourse.name || '',
         objectives: selectedCourse.objectives || '',
       });
@@ -108,7 +108,7 @@ export const EditCourseForm: React.FC<{
         </Box>
         <Divider sx={{ mt: 3 }} />
         <LessonsList
-          lessons={ courseLessons || [] }
+          lessons={ lessons }
           onDeleteLesson={ handleDeleteLesson }
         />
         <Button

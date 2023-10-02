@@ -1,27 +1,24 @@
-import { Lesson } from './lesson';
-
 export class Course {
-  activeLesson?: Lesson;
-  completed: boolean;
-  completedLessons: Lesson[];
-  courseLessons: Lesson[];
+  completedLessonIds: number[];
+  completionCount: number = 0;
+  courseLessonIds: number[];
   duration: number;
   id: number;
   name: string;
   numberOfStudents: number;
   objectives: string;
+  progress: number;
   sinceDate: string;
 
-  constructor(name: string, objectives: string, lessons?: Lesson[]) {
-    this.activeLesson = lessons?.[0];
-    this.completed = false;
-    this.completedLessons = [];
-    this.courseLessons = [];
+  constructor(name: string, objectives: string) {
+    this.completedLessonIds = [];
+    this.courseLessonIds = [];
     this.id = new Date().getTime();
     this.name = name;
     this.numberOfStudents = 0;
     this.objectives = objectives;
+    this.progress = 0;
     this.sinceDate = new Date().toISOString();
-    this.duration = this.courseLessons.reduce((acc, curr) => acc + Number(curr.duration), 0);
+    this.duration = 0;
   }
 }

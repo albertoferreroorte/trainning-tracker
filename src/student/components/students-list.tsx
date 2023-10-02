@@ -1,17 +1,14 @@
-import { HourglassEmpty } from '@mui/icons-material';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Typography } from '@mui/material';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { useState } from 'react';
-import { calculateCourseProgress } from '../../shared/helpers';
-import { useAppDispatch, useAppSelector } from '../../shared/hooks';
-import { selectStudentByEntity, startSelectStudentCourse } from '../../store';
-import { startSetCompletedLessons } from '../../store/course';
 import { Student } from '../entities/student';
-import { ProgressBar } from './progress-bar';
+import { StudentCoursesProgressBar } from './student-courses-progress-bar';
 
-export const StudentsList: React.FC<{ students: Student[] }> = () => {
-  const { selected, selectedStudentCourse, students } = useAppSelector(state => state.student);
-  const dispatch = useAppDispatch();
+export const StudentsList: React.FC<{
+  onSelectStudent: (student: Student) => void,
+  selectedStudent: Student | null,
+  students: Student[],
+}> = ({ onSelectStudent, selectedStudent, students }) => {
 
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<string>('fullName');
@@ -19,12 +16,10 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
   const handleClick = (_e: React.MouseEvent<unknown>, id: string) => {
     const student: Student | undefined = students.find(s => s.id.toLocaleString() === id);
     if (!student) return;
-    dispatch( selectStudentByEntity(student) );
-    dispatch( startSelectStudentCourse(null) );
-    const studentCompetedLessons = students.find(s => s.id === selected?.id)?.courses?.find(c => c.id === selectedStudentCourse?.id)?.completedLessons;
-    dispatch( startSetCompletedLessons(studentCompetedLessons || []) );
+    onSelectStudent(student);
   };
-  const isSelected = (name: string) => selected?.id?.toLocaleString().indexOf(name) !== -1;
+  
+  const isSelected = (id: number) => selectedStudent?.id === id;
 
   const handleRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -36,17 +31,16 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
     const isAsc = order === 'asc';
     if (orderBy === 'fullName') {
       return isAsc ? a.fullName.localeCompare(b.fullName) : b.fullName.localeCompare(a.fullName);
+    } else if (orderBy === 'sinceDate') {
+      const aSinceDate = parseFloat(a.sinceDate.toLocaleString());
+      const bSinceDate = parseFloat(b.sinceDate.toLocaleString());
+      if (!isNaN(aSinceDate) && !isNaN(bSinceDate)) {
+        return isAsc ? aSinceDate - bSinceDate : bSinceDate - aSinceDate;
+      }
     }
     return 0;
   });
-
-  const sortedSinceDates = students.slice().sort((a, b) => {
-    const isAsc = order === 'asc';
-    if (orderBy === 'sinceDate') {
-      return isAsc ? a.sinceDate.localeCompare(b.sinceDate) : b.sinceDate.localeCompare(a.sinceDate);
-    }
-    return 0;
-  });
+  
 
   return (
     <TableContainer component={Paper}>
@@ -68,7 +62,7 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
             </TableCell>
             <TableCell>
               {
-                sortedSinceDates.length > 1
+                sortedStudents.length > 1
                   ? (<TableSortLabel
                       active={orderBy === 'sinceDate'}
                       direction={order}
@@ -86,7 +80,7 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
         <TableBody>
           {
             sortedStudents.map((student) => {
-              const isItemSelected = isSelected(student.id.toLocaleString());
+              const isItemSelected = isSelected(student.id);
               return (
                 <TableRow
                   key={`${student.id}${student.fullName}`}
@@ -98,23 +92,13 @@ export const StudentsList: React.FC<{ students: Student[] }> = () => {
                     <Typography>{ student.fullName }</Typography>
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    <Typography>{ format(parseISO(student.sinceDate), 'LLL yyyy') }</Typography>
+                    <Typography>{ format(new Date(student.sinceDate), 'LLL yyyy') }</Typography>
                   </TableCell>
                   <TableCell component="th" scope="row">
                     <Typography>{ student.jobPosition }</Typography>
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    {
-                      student.courses
-                        ? student.courses.map(({ id, name, courseLessons, completedLessons }) =>
-                          <ProgressBar
-                            key={ id }
-                            name={ name }
-                            progress={ calculateCourseProgress(courseLessons, completedLessons) }
-                          />
-                        )
-                        : <HourglassEmpty color='disabled' />
-                    }
+                    <StudentCoursesProgressBar student={student} />
                   </TableCell>
                 </TableRow>
               );
