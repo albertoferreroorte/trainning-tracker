@@ -17,7 +17,7 @@ export const EditCourseForm: React.FC<{
   const { formState, setFormState, onInputChange } = useForm({ ...selectedCourse });
 
   const [newLessonName, setNewLessonName] = useState('');
-  const [newLessonDuration, setNewLessonDuration] = useState('');
+  const [newLessonDuration, setNewLessonDuration] = useState(1);
 
   useEffect(() => {
     if (selectedCourse) {
@@ -31,9 +31,9 @@ export const EditCourseForm: React.FC<{
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (formState.name?.trim().length === 0) return;
+    if (formState.name?.trim().length === 0 || formState.duration === 0) return;
     
-    onEditCourse({ name: formState.name, objectives: formState.objectives });
+    onEditCourse({ duration: formState.duration, name: formState.name, objectives: formState.objectives });
   }
 
   const handleAddLesson = () => {
@@ -44,7 +44,7 @@ export const EditCourseForm: React.FC<{
     onAddLesson(newLesson);
 
     setNewLessonName('');
-    setNewLessonDuration('');
+    setNewLessonDuration(1);
   }
 
   const handleDeleteLesson = (id: number) => {
@@ -92,7 +92,7 @@ export const EditCourseForm: React.FC<{
               name='newLessonDuration'
               value={newLessonDuration}
               variant='outlined'
-              onChange={(e) => setNewLessonDuration(e.target.value)}
+              onChange={(e) => setNewLessonDuration(Number(e.target.value))}
             />
           </Box>
           <Button

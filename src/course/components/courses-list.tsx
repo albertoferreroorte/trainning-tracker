@@ -2,7 +2,8 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import { useAppDispatch, useAppSelector } from '../../shared/hooks';
 import { Course } from '../entities';
 import { startSelectCourse } from '../../store/course';
-import { getNumberOfStudentsCourse, getTimesCompletedCourse, RootState } from '../../store';
+import { getCourseDurationFromLessons, getNumberOfStudentsCourse, getTimesCompletedCourse, RootState } from '../../store';
+import { format } from 'date-fns';
 
 interface CourseRowProps {
   course: Course;
@@ -13,6 +14,7 @@ interface CourseRowProps {
 const CourseRow: React.FC<CourseRowProps> = ({ course, isSelected, onSelectionChange }) => {
   const attendances = useAppSelector((state: RootState) => getNumberOfStudentsCourse(state, course.id));
   const completions = useAppSelector((state: RootState) => getTimesCompletedCourse(state, course.id));
+  const duration = useAppSelector((state: RootState) => getCourseDurationFromLessons(state, course.id));
   return (
     <TableRow
       key={`${course.id}${course.name}`}
@@ -21,9 +23,9 @@ const CourseRow: React.FC<CourseRowProps> = ({ course, isSelected, onSelectionCh
       sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer', verticalAlign: 'top' }}
     >
       <TableCell>{ course.name }</TableCell>
-      <TableCell>{ course.sinceDate }</TableCell>
+      <TableCell>{ format(new Date(course.sinceDate), 'LLL yyyy') }</TableCell>
       <TableCell>{ course.objectives }</TableCell>
-      <TableCell>{ course.duration }</TableCell>
+      <TableCell>{ duration }</TableCell>
       <TableCell>{ attendances }</TableCell>
       <TableCell>{ completions }</TableCell>
     </TableRow>

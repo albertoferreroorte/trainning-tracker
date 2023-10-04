@@ -56,7 +56,7 @@ export const studentSlice = createSlice({
           studentCourses: {}
         };
       }
-      state.entities[studentId]!.studentCourses[courseId] = lessonsIds;
+      state.entities[studentId]!.completedLessons[courseId] = lessonsIds;
     },
     setStudentCourseLessons: (state, action) => {
       state.studentCourseLessons = action.payload;

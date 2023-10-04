@@ -1,5 +1,7 @@
 export class Student {
-  completedLessons: number[];
+  completedLessons: {
+    [courseId: number]: number[];
+  };
   courseIds: number[];
   fullName: string;
   id: number;

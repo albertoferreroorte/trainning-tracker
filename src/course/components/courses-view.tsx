@@ -6,7 +6,6 @@ import { format, parseISO } from 'date-fns';
 
 interface CourseViewProps {
   courses: Course[];
-  duration: string;
   lessons: Lesson[];
   name: string;
   objectives: string;
@@ -18,7 +17,7 @@ interface CourseViewProps {
   sinceDate: string;
 }
 
-export const CourseView: React.FC<CourseViewProps> = ({ courses, duration, lessons, name, objectives, onAddLesson, onDeleteCourse, onDeleteLesson, onSaveCourse, selectedCourse, sinceDate }) => {
+export const CourseView: React.FC<CourseViewProps> = ({ courses, lessons, name, objectives, onAddLesson, onDeleteCourse, onDeleteLesson, onSaveCourse, selectedCourse, sinceDate }) => {
   
   const handleAddLesson = (lesson: Lesson) => {
     onAddLesson(lesson);
@@ -55,7 +54,6 @@ export const CourseView: React.FC<CourseViewProps> = ({ courses, duration, lesso
       />
       <CardContent sx={{ pt: 0 }}>
         <Typography variant="body2" display="block">Created { format(parseISO(sinceDate), 'LLLL yyyy') } </Typography>
-        <Typography variant="body2" display="block" gutterBottom>Duration { duration } hours</Typography>
         <EditCourseForm
           courses={ courses }
           lessons={ lessons }

@@ -1,10 +1,10 @@
 export class Lesson {
-  duration: string;
+  duration: number;
   id: number;
   title: string;
 
-  constructor(duration: string, title: string) {
-    this.duration = duration || '0';
+  constructor(duration: number, title: string) {
+    this.duration = duration || 0;
     this.id = new Date().getTime();
     this.title = title || '';
   }

@@ -60,7 +60,11 @@ export const startUpdateStudent = (
     if (!currentCourseId) return;
     const lessonIdsForCourse = state.course.entities[currentCourseId]?.courseLessonIds || [];
     const selectedLessonIds = state.student.selectedStudentLessonIds || [];
-    const updatedCompletedLessons = Array.from(new Set([...completedLessons, ...selectedLessonIds]));
+    const updatedCompletedLessonsForCourse = Array.from(new Set([...(completedLessons[courseId] || []), ...selectedLessonIds]));
+    const updatedCompletedLessons = {
+      ...completedLessons,
+      [courseId]: updatedCompletedLessonsForCourse,
+    };
     const updatedStudentCourses = {
       ...studentCourses,
       [courseId]: lessonIdsForCourse,
@@ -75,3 +79,4 @@ export const startUpdateStudent = (
     }));
   };
 };
+

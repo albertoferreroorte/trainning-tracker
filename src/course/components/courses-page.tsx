@@ -78,7 +78,6 @@ export const CoursesPage: React.FC = () => {
                 <CourseView
                   courses={ courses }
                   name={ selectedCourse?.name || '' }
-                  duration={ selectedCourse?.duration?.toLocaleString() || '0' }
                   lessons={ lessons }
                   objectives={ selectedCourse?.objectives || '' }
                   onAddLesson={ handleAddLesson }

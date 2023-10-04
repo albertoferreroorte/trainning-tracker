@@ -6,12 +6,12 @@ export const calculateCourseProgress = (lessons: Lesson[], completedLessons: Les
   }
 
   const totalDuration = lessons.reduce(
-    (acc, lesson) => acc + parseFloat(lesson.duration),
+    (acc, lesson) => acc + lesson.duration,
     0
   );
 
   const totalCompletedDuration = completedLessons?.reduce(
-    (acc, lesson) => acc + parseFloat(lesson.duration),
+    (acc, lesson) => acc + lesson.duration,
     0
   );
 

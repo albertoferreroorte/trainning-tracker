@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PersonOutline } from '@mui/icons-material';
 import { Button, Checkbox, FormControl, Grid, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import { Course, Lesson } from '../../course';
@@ -21,9 +21,10 @@ export const EditStudentForm: React.FC<{
 
   const { formState, setFormState, onInputChange } = useForm({ ...selectedStudent });
 
-  const updatedLessons = lessons.filter(lesson => selectedLessonIds.includes(lesson.id));
-  const lessonsStringFormat = updatedLessons.map(lesson => lesson.title);
-
+  const lessonsStringFormat = useMemo(() => {
+    return lessons.filter(lesson => selectedLessonIds.includes(lesson.id)).map(lesson => lesson.title);
+  }, [lessons, selectedLessonIds]);
+  
   const [selectedStudentLessons, setStudentSelectedLessons] = useState<string[]>([]);
 
   useEffect(() => {
