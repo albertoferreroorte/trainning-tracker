@@ -3,9 +3,9 @@ import { useAppDispatch, useCompletedLessons, useCourses, useLessons, useSelecte
 import { ColumnLayout } from '../../shared/layout/column-layout';
 import { startAddStudent, startDeleteStudent, startSelectStudent, startSelectStudentCourse, startSelectStudentLessons, startSetStudentCourseLessons, startUpdateStudent } from '../../store/student';
 import { Student } from '../entities/student';
-import { AddStudentForm } from './add-student-form';
-import { StudentView } from './student-view';
-import { StudentsList } from './students-list';
+import { AddStudentForm } from '../components/add-student-form';
+import { StudentView } from '../components/student-view';
+import { StudentsList } from '../components/students-list';
 
 export const StudentsPage: React.FC = () => {
 
