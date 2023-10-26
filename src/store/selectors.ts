@@ -100,7 +100,6 @@ export const selectCompletedLessonsForStudentAndCourse = createSelector(
       return [];
     }
     const finalLessons: Lesson[] = lessons.filter(lesson => completedLessonIds.includes(lesson.id));
-    console.log('finmal lessons', completedLessonIds);
     return finalLessons;
   }
 );

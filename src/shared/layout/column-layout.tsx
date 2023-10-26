@@ -1,13 +1,16 @@
+import { ReactNode } from 'react';
 import { Grid } from '@mui/material';
 
-export const ColumnLayout: React.FC<{
-  children: React.ReactNode,
-  layout?: string,
-}> = ({ children, layout = 'main' }) => {
+interface Props {
+  children: ReactNode;
+  layout?: string;
+}
+
+export const ColumnLayout = ({ children, layout = 'main' }: Props) => {
   return (
     <Grid
       alignItems="center"
-      className={ `column-section column-section--${ layout }` }
+      className={ `column-section ${ layout } && column-section--${ layout }` }
       container
       direction="column"
       height="100%"

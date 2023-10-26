@@ -1,6 +1,6 @@
-import { Route, Routes } from "react-router-dom"
-import { CoursesPage } from "../course/components"
-import { StudentsPage } from "../student/components"
+import { Route, Routes } from 'react-router-dom';
+import { CoursesPage } from '../course/pages/courses-page';
+import { StudentsPage } from '../student/pages/students-page';
 
 export const AppRouter = () => {
   return (

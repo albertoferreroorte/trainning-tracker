@@ -49,7 +49,7 @@ export const StudentsList: React.FC<{
           <TableRow>
             <TableCell>
               {
-                sortedStudents.length > 1
+                sortedStudents?.length > 1
                   ? (<TableSortLabel
                     active={orderBy === 'fullName'}
                     direction={order}
@@ -62,7 +62,7 @@ export const StudentsList: React.FC<{
             </TableCell>
             <TableCell>
               {
-                sortedStudents.length > 1
+                sortedStudents?.length > 1
                   ? (<TableSortLabel
                       active={orderBy === 'sinceDate'}
                       direction={order}
@@ -79,7 +79,7 @@ export const StudentsList: React.FC<{
         </TableHead>
         <TableBody>
           {
-            sortedStudents.map((student) => {
+            sortedStudents?.map((student) => {
               const isItemSelected = isSelected(student.id);
               return (
                 <TableRow

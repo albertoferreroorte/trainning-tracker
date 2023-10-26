@@ -4,7 +4,7 @@ import { ColumnLayout } from '../../shared/layout/column-layout';
 import { startAddLessonToCourse, startAddNewCourse, startDeleteCourse, startUpdateCourse } from '../../store/course';
 import { startAddNewLesson, startDeleteLesson } from '../../store/lesson';
 import { Course, Lesson } from '../entities';
-import { AddCourseForm, CoursesList, CourseView } from './';
+import { AddCourseForm, CoursesList, CourseView } from '../components';
 
 export const CoursesPage: React.FC = () => {
 
