@@ -1,5 +1,4 @@
-import { Course } from '../../course';
-import { selectCompletedLessonsForStudentAndCourse, selectCourseLessons, selectCoursesForStudent, selectStudentById, selectStudentCourse, selectStudentCourseCompletedLessons, selectStudentCourses, selectStudentCoursesDetails, selectStudentsWithCoursesAndCompletedLessons } from '../../store';
+import { selectCourseLessons, selectCoursesForStudent, selectStudentById, selectStudentCourse, selectStudentCourseCompletedLessons, selectStudentCourses, selectStudentsWithCoursesAndCompletedLessons } from '../../store';
 import { selectAllStudents } from '../../store/student';
 import { useAppSelector } from './use-app-selector';
 
@@ -17,8 +16,6 @@ export const useStudents = () => {
 
   const selectedStudentLessonIds = useAppSelector(state => state.student.selectedStudentLessonIds);
 
-  const studentCourseCompletedLessons = useAppSelector(selectStudentCourseCompletedLessons);
-
   const studentCourseLessons = useAppSelector(selectCourseLessons());
 
   const studentsWithDetails = useAppSelector(selectStudentsWithCoursesAndCompletedLessons);
@@ -30,7 +27,6 @@ export const useStudents = () => {
     selectedStudentCourses,
     selectedStudentId,
     selectedStudentLessonIds,
-    studentCourseCompletedLessons,
     studentCourseLessons,
     students,
     studentsWithDetails,
@@ -39,18 +35,11 @@ export const useStudents = () => {
 
 export const useSelectedStudent = (studentId: number ) => {
   const coursesForStudent = useAppSelector(state => selectCoursesForStudent(state, studentId));
+  const studentCourseCompletedLessons = useAppSelector(state => selectStudentCourseCompletedLessons(state, studentId));
   const selectedStudent = useAppSelector(state => selectStudentById(state, studentId ));
-  const studentCoursesDetails: Course[] = useAppSelector(selectStudentCoursesDetails) as Course[];
   return {
     coursesForStudent,
+    studentCourseCompletedLessons,
     selectedStudent,
-    studentCoursesDetails,
   };
-}
-
-export const useCompletedLessons = (studentId: number, courseId: number) => {
-  const completedLessons = useAppSelector(state => selectCompletedLessonsForStudentAndCourse(state, studentId, courseId));
-  return {
-    completedLessons,
-  }
 }

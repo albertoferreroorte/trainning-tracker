@@ -5,9 +5,7 @@ import { Course, Lesson } from '../../course';
 import { useForm } from '../../shared/hooks';
 import { Student } from '../entities';
 
-const setSelectLessonTitle = ( index: number, title: string ) => ( `${index}. ${title}`);
-
-export const EditStudentForm: React.FC<{
+interface Props {
   courses: Course[];
   lessons: Lesson[];
   onEditStudent: (student: Partial<Student>) => void,
@@ -17,19 +15,28 @@ export const EditStudentForm: React.FC<{
   selectedCourseId: number | null;
   selectedLessonIds: number[];
   selectedStudent: Student | null;
-}> = ({ courses, lessons, onEditStudent, onSelectCourse, onSelectLessonIds, onSetLessonIds, selectedCourseId, selectedLessonIds, selectedStudent }) => {
+}
+
+const setSelectLessonTitle = ( index: number, title: string ) => ( `${index}. ${title}` );
+
+export const EditStudentForm = ({ courses, lessons, onEditStudent, onSelectCourse, onSelectLessonIds, onSetLessonIds, selectedCourseId, selectedLessonIds, selectedStudent }: Props) => {
 
   const { formState, setFormState, onInputChange } = useForm({ ...selectedStudent });
+  
+  const [selectedStudentLessons, setStudentSelectedLessons] = useState<string[]>([]);
 
   const lessonsStringFormat = useMemo(() => {
     return lessons.filter(lesson => selectedLessonIds.includes(lesson.id)).map(lesson => lesson.title);
   }, [lessons, selectedLessonIds]);
-  
-  const [selectedStudentLessons, setStudentSelectedLessons] = useState<string[]>([]);
 
   useEffect(() => {
-    setStudentSelectedLessons(lessonsStringFormat);
+    setStudentSelectedLessons([]);
   }, [selectedCourseId]);
+
+  useEffect(() => {
+    if (!selectedLessonIds.length) return;
+    setStudentSelectedLessons(lessonsStringFormat);
+  }, [lessonsStringFormat, selectedLessonIds]);
 
   useEffect(() => {
     if (selectedStudent) {
@@ -39,7 +46,7 @@ export const EditStudentForm: React.FC<{
         jobPosition: selectedStudent.jobPosition || '',
       });
     }
-  }, [ lessons, setFormState, selectedStudent]);
+  }, [setFormState, selectedStudent]);
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();

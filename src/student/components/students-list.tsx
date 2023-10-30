@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { Student } from '../entities/student';
 import { StudentCoursesProgressBar } from './student-courses-progress-bar';
 
-export const StudentsList: React.FC<{
+interface Props {
   onSelectStudent: (student: Student) => void,
   selectedStudent: Student | null,
   students: Student[],
-}> = ({ onSelectStudent, selectedStudent, students }) => {
+}
+
+export const StudentsList = ({ onSelectStudent, selectedStudent, students }: Props) => {
 
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<string>('fullName');
@@ -40,7 +42,6 @@ export const StudentsList: React.FC<{
     }
     return 0;
   });
-  
 
   return (
     <TableContainer component={Paper}>
@@ -98,7 +99,10 @@ export const StudentsList: React.FC<{
                     <Typography>{ student.jobPosition }</Typography>
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    <StudentCoursesProgressBar student={student} />
+                    <StudentCoursesProgressBar
+                      key={ student.id }
+                      student={ student }
+                    />
                   </TableCell>
                 </TableRow>
               );

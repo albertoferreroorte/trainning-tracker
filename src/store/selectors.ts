@@ -14,8 +14,8 @@ const selectAllStudents = (state: RootState) => studentsAdapter.getSelectors().s
 
 const getSelectedStudentId = (state: RootState) => state.student.selectedStudentId;
 const getSelectedStudentCourseId = (state: RootState) => state.student.selectedStudentCourseId;
-const getSelectedStudentCourseLessonIds = (state: RootState) => state.student.studentCourseLessons;
 
+const getStudentCourseLessonIds = (state: RootState) => state.student.studentCourseLessons;
 const selectCourseById = (courseId: number) => createSelector(
   selectCourseState,
   (courseState) => courseAdapter.getSelectors().selectById(courseState, courseId)
@@ -31,11 +31,26 @@ export const selectStudentById = createSelector(
 
 export const selectCourseLessons = () => createSelector(
   selectAllLessons,
-  getSelectedStudentCourseLessonIds,
-  (allLessons, selectedLessonIds) => {
-    return allLessons.filter(lesson => selectedLessonIds.includes(lesson.id));
+  getStudentCourseLessonIds,
+  (allLessons, lessonIds) => {
+    return allLessons.filter(lesson => lessonIds.includes(lesson.id));
   }
 );
+
+export const getCourseDurationFromLessons = (state: RootState, courseId: number) => {
+  const course = state.course.entities[courseId];
+  if (!course) {
+    return 0;
+  }
+  const totalDuration = course.courseLessonIds.reduce((sum: number, lessonId: number) => {
+    const lesson = state.lesson.entities[lessonId];
+    if (!lesson) {
+      return sum;
+    }
+    return sum + lesson.duration;
+  }, 0);
+  return totalDuration;
+};
 
 export const selectLessons = (courseId: number) => createSelector(
   selectCourseById(courseId),
@@ -48,22 +63,6 @@ export const selectLessons = (courseId: number) => createSelector(
     }).filter(Boolean) as Lesson[];
   }
 );
-
-export const getCourseDurationFromLessons = (state: RootState, courseId: number) => {
-  const course = state.course.entities[courseId];
-  if (!course) {
-    return 0;
-  }
-  const totalDuration = course.courseLessonIds.reduce((sum, lessonId) => {
-    const lesson = state.lesson.entities[lessonId];
-    if (!lesson) {
-      return sum;
-    }
-    return sum + lesson.duration;
-  }, 0);
-  return totalDuration;
-};
-
 
 export const getNumberOfStudentsCourse = (state: RootState, courseId: number): number => 
   Object.values(state.student.entities).filter(s => s?.courseIds.includes(courseId)).length;
@@ -91,46 +90,34 @@ export const isValidLessonForCourse = (state: RootState, lessonId: number, cours
   return course.courseLessonIds.includes(lessonId);
 };
 
-export const selectCompletedLessonsForStudentAndCourse = createSelector(
-  [selectAllStudents, selectAllLessons, (_, studentId) => studentId, (_, _2, courseId) => courseId],
-  (students, lessons, studentId, courseId) => {
-    const student = students.find(s => s.id === studentId);
-    const completedLessonIds = student?.completedLessons?.[courseId] ?? [];
-    if (!completedLessonIds.length) {
-      return [];
-    }
-    const finalLessons: Lesson[] = lessons.filter(lesson => completedLessonIds.includes(lesson.id));
-    return finalLessons;
-  }
-);
-
 export const selectCoursesForStudent = createSelector(
-  [selectAllCourses, selectAllLessons, selectStudentById],
+  [
+    selectAllCourses,
+    selectAllLessons,
+    selectStudentById,
+  ],
   (allCourses, allLessons, student) => {
-    if (!student || !student.studentCourses) {
+    if (!student) {
       return [];
     }
 
-    return Object.keys(student.studentCourses).map(courseIdStr => {
-      const courseId = Number(courseIdStr);
-      const course = allCourses.find(c => c.id === courseId);
+    return student.courseIds.map(courseId => {
+      const course = allCourses.find(c => c.id === Number(courseId));
+      
       if (!course) return undefined;
-
       const lessonsForCourse = allLessons.filter(lesson => 
-        student.studentCourses[courseId]?.includes(lesson.id)
+        student.studentCourses[course.id]?.includes(lesson.id)
       );
-
       const completedLessons = lessonsForCourse.filter(lesson => 
-        student.completedLessons[courseId].includes(lesson.id)
+        student.completedLessons[course.id]?.includes(lesson.id)
       );
-
       const courseWithProgress: Course = {
         ...course,
         progress: calculateCourseProgress(lessonsForCourse, completedLessons)
       };
 
-      return courseWithProgress;
-    }).filter(Boolean) as Course[];
+      return courseWithProgress || [];
+    });
   }
 );
 
@@ -164,36 +151,32 @@ export const selectStudentSelectedCourse = createSelector(
 );
 
 export const selectStudentCourseCompletedLessons = createSelector(
-  [selectAllStudents, getSelectedStudentId, selectAllCourses, getSelectedStudentCourseId, selectAllLessons],
-  (students, studentId, courses, courseId, lessons) => {
-    const student = students.find(s => s.id === studentId);
+  [selectAllCourses, getSelectedStudentCourseId, selectAllLessons, selectStudentById,],
+  (courses, courseId, lessons, student) => {
     if (!student || !courseId) return [];
 
-    const currentCourse = courses[courseId];
-    if (!currentCourse || !studentId) return [];
+    const currentCourse = courses.find(c => c.id === courseId);
+    if (!currentCourse || !student.id) return [];
 
-    const studentCoursesForSpecificStudent = student.studentCourses;
-    if (!studentCoursesForSpecificStudent) return [];
-
-    const completedLessonIdsForCurrentCourse: number[] = studentCoursesForSpecificStudent[courseId];
-    if (!completedLessonIdsForCurrentCourse || completedLessonIdsForCurrentCourse.length === 0) return [];
+    const studentCompletedLessons = student.completedLessons;
+    if (!studentCompletedLessons) return [];
 
     return currentCourse.courseLessonIds
-      .filter(lessonId => completedLessonIdsForCurrentCourse.includes(lessonId))
+      .filter(lessonId => student.completedLessons[courseId]?.includes(lessonId))
       .map(lessonId => lessons.find(lesson => lesson.id === lessonId))
-      .filter(Boolean) as Lesson[];
+      .filter(Boolean);
   }
 );
 
-export const selectStudentCoursesDetails = createSelector(
-  [selectAllCourses, selectAllStudents, getSelectedStudentId],
-  (courses, students, studentId) => {
-    const student = students.find(s => s.id === studentId);
-    if (!student) return [];
-    return student.courseIds
-      .map(courseId => courses[courseId])
-      .filter(course => Boolean(course));
-  }
+export const selectStudentCoursesDetails = (studentId: number) => createSelector(
+    [selectAllCourses, selectAllStudents],
+    (courses, students) => {
+      const student = students.find(s => s.id === studentId);
+      if (!student) return [];
+      return student.courseIds.map(courseId =>
+        courses.find(course => course.id === courseId)
+      ) || [];
+    }
 );
 
 export const selectStudentCourseLessons = createSelector(
@@ -232,9 +215,3 @@ export const selectStudentsWithCoursesAndCompletedLessons = createSelector(
     });
   }
 );
-
-
-
-
-
-

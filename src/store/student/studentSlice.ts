@@ -1,18 +1,13 @@
 import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
-import { Student } from '../../student/entities';
+import { Student, StudentCourses } from '../../student/entities';
 import { RootState } from '../store';
-
-type StudentCourses = {
-  [studentId: string]: {
-    [courseId: string]: number[];
-  };
-};
 
 interface StudentState extends EntityState<Student> {
   selectedStudentId: number | null;
   selectedStudentCourseId: number | null,
   selectedStudentLessonIds: number[],
   studentCourses: StudentCourses;
+  studentCourseCompletedLessons: number[];
   studentCourseLessons: number[];
 }
 
@@ -23,6 +18,7 @@ const initialState: StudentState = studentsAdapter.getInitialState({
   selectedStudentCourseId: null,
   selectedStudentLessonIds: [],
   studentCourses: {},
+  studentCourseCompletedLessons: [],
   studentCourseLessons: [],
 });
 
@@ -57,6 +53,7 @@ export const studentSlice = createSlice({
         };
       }
       state.entities[studentId]!.completedLessons[courseId] = lessonsIds;
+      state.studentCourseCompletedLessons.push(lessonsIds);
     },
     setStudentCourseLessons: (state, action) => {
       state.studentCourseLessons = action.payload;

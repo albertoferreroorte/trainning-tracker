@@ -23,7 +23,7 @@ export const HeaderComponent = () => {
         startIcon={<TimelineOutlined fontSize='large' />}
         sx={{ mx: 3 }}
       >
-        Track
+        Tracking grid
       </Button>
     </Grid>
   );

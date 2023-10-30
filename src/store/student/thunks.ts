@@ -56,11 +56,11 @@ export const startUpdateStudent = (
     if (!currentStudent) return;
     const { courseIds, completedLessons, studentCourses } = currentStudent;
     const updatedCourseIds = Array.from(new Set([...courseIds, courseId]));
-    const currentCourseId = state.course.selectedCourseId;
+    const currentCourseId = state.student.selectedStudentCourseId;
     if (!currentCourseId) return;
     const lessonIdsForCourse = state.course.entities[currentCourseId]?.courseLessonIds || [];
     const selectedLessonIds = state.student.selectedStudentLessonIds || [];
-    const updatedCompletedLessonsForCourse = Array.from(new Set([...(completedLessons[courseId] || []), ...selectedLessonIds]));
+    const updatedCompletedLessonsForCourse = [...new Set([...(completedLessons[courseId] || []), ...selectedLessonIds])];
     const updatedCompletedLessons = {
       ...completedLessons,
       [courseId]: updatedCompletedLessonsForCourse,

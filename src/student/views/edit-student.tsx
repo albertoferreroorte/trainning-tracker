@@ -2,7 +2,7 @@ import { PersonOutline } from '@mui/icons-material';
 import { Box, Button, Card, CardContent, CardHeader, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import { EditStudentForm } from '../components';
-import { useAppDispatch, useCompletedLessons, useCourses, useLessons, useSelectedStudent, useStudents } from '../../shared/hooks';
+import { useAppDispatch, useCourses, useSelectedStudent, useStudents } from '../../shared/hooks';
 import { startDeleteStudent, startSelectStudentCourse, startSelectStudentLessons, startSetStudentCourseLessons, startUpdateStudent } from '../../store/student';
 import { Student } from '../entities';
 
@@ -11,10 +11,8 @@ export const EditStudentView = () => {
   const dispatch = useAppDispatch();
 
   const { courses } = useCourses();
-  const { selectedStudentId, selectedStudentCourseId } = useStudents();
-  const { selectedStudent } = useSelectedStudent(selectedStudentId ?? 0);
-  const { lessons } = useLessons(selectedStudentCourseId ?? 0);
-  const { completedLessons } = useCompletedLessons(selectedStudent?.id ?? 0, selectedStudentCourseId ?? 0);
+  const { selectedStudentId, selectedStudentCourseId, studentCourseLessons } = useStudents();
+  const { studentCourseCompletedLessons, selectedStudent } = useSelectedStudent(selectedStudentId ?? 0);
  
   const handleDeleteStudent = () => {
     if (!selectedStudent?.id) return;
@@ -71,13 +69,13 @@ export const EditStudentView = () => {
               </Typography>
               <EditStudentForm
                 courses={ courses }
-                lessons={ lessons }
+                lessons={ studentCourseLessons }
                 onEditStudent={ handleSaveStudent }
                 onSelectCourse={ handleSelectCourse }
                 onSelectLessonIds={ handleSelectLessonIds }
                 onSetLessonIds={ handleSetLessons }
                 selectedCourseId={ selectedStudentCourseId }
-                selectedLessonIds={ completedLessons.map(lesson => lesson.id) || [] }
+                selectedLessonIds={ studentCourseCompletedLessons.map(lesson => lesson?.id || 0) || [] }
                 selectedStudent={ selectedStudent }
               />
             </CardContent>

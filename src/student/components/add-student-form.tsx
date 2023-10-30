@@ -2,28 +2,28 @@ import { Button, Grid, TextField } from '@mui/material';
 import { useForm } from '../../shared/hooks';
 import { StudentFormData } from '../entities';
 
+interface Props {
+  onAddStudent: (name: string, position: string) => void,
+}
+
 const initialForm: StudentFormData = {
   fullName: '',
   jobPosition: '',
 };
 
-export const AddStudentForm: React.FC<{
-  onAddStudent: (name: string, position: string) => void,
-}> = ({ onAddStudent }) => {
+export const AddStudentForm = ({ onAddStudent }: Props) => {
 
   const { formState: { fullName = '', jobPosition = '' }, onInputChange } = useForm(initialForm);
 
-  const submitHandler = (event: React.FormEvent) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
     if (fullName.trim().length === 0) return;
-
     onAddStudent(fullName, jobPosition);
   }
 
   return (
     <Grid container sx={{ mt: 3 }}>
-      <form aria-label="form" onSubmit={ submitHandler }>
+      <form aria-label="form" onSubmit={ handleSubmit }>
         <TextField
           fullWidth
           label='Student name'

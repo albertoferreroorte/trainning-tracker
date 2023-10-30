@@ -1,11 +1,7 @@
-import { useSelectedStudent, useStudents } from '../../shared/hooks';
 import { ColumnLayout } from '../../shared/layout/column-layout';
 import { AddStudentView, EditStudentView, StudentsView } from '../views';
 
 export const StudentsPage = () => {
-
-  const { selectedStudentId } = useStudents();
-  const { selectedStudent } = useSelectedStudent(selectedStudentId ?? 0);
 
   return (
     <ColumnLayout layout="secondary">
@@ -22,13 +18,9 @@ export const StudentsPage = () => {
           }}> */
         }
         <StudentsView />
-        {
-          selectedStudent && (
-            <ColumnLayout>
-              <EditStudentView />
-            </ColumnLayout>
-          )
-        }
+        <ColumnLayout>
+          <EditStudentView />
+        </ColumnLayout>
       </ColumnLayout>
     </ColumnLayout>
   );
