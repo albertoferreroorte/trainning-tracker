@@ -16,7 +16,7 @@ export const StudentsView = () => {
   }
 
   return (
-    <Box sx={{ p: { md: 3 }, mb: 3 }}>
+    <Box sx={{ p: { md: 3 }, my: 7 }}>
       <Typography
         component='h3'
         variant="h2"

@@ -39,7 +39,7 @@ export const EditStudentView = () => {
   }
 
   return (
-    <Box sx={{ flexGrow: 1, p: { sm: '100px'}, maxWidth: 800, width: 'calc( 100% - 200px)' }}>
+    <Box sx={{ display: 'flex', flexGrow: 1, p: { lg: '100px' }, marginTop: 7, maxWidth: {  lg: 800 }, width: 'calc( 100% - 200px)' }}>
       {
         selectedStudent && (
           <Card sx={{ padding: 7, width: '100%' }}>

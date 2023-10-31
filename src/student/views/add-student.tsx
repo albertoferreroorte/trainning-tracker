@@ -14,7 +14,7 @@ export const AddStudentView = () => {
   };
 
   return (
-    <Box sx={{ p: { md: 3 }, mt: 1 }}>
+    <Box sx={{ p: { md: 3 }, my: 7 }}>
       <Typography variant="h2" component='h4'>Create student</Typography>
       <AddStudentForm onAddStudent={ handleAddStudent } />
     </Box>

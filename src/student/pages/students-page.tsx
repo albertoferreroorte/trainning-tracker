@@ -1,5 +1,6 @@
 import { ColumnLayout } from '../../shared/layout/column-layout';
 import { AddStudentView, EditStudentView, StudentsView } from '../views';
+import { ProjectDescriptionComponent } from '../../shared/components';
 
 export const StudentsPage = () => {
 
@@ -11,6 +12,7 @@ export const StudentsPage = () => {
         <ColumnLayout>
           <EditStudentView />
         </ColumnLayout>
+        <ProjectDescriptionComponent />
       </ColumnLayout>
     </ColumnLayout>
   );

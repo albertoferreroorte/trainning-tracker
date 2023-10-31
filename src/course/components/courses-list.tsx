@@ -1,8 +1,7 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { useAppDispatch, useAppSelector } from '../../shared/hooks';
+import { useAppDispatch, useCourse, useCourses } from '../../shared/hooks';
 import { Course } from '../entities';
 import { startSelectCourse } from '../../store/course';
-import { getCourseDurationFromLessons, getNumberOfStudentsCourse, getTimesCompletedCourse, RootState } from '../../store';
 import { format } from 'date-fns';
 
 interface CourseRowProps {
@@ -17,9 +16,9 @@ interface Props {
 }
 
 const CourseRow = ({ course, isSelected, onSelectionChange }: CourseRowProps) => {
-  const attendances = useAppSelector((state: RootState) => getNumberOfStudentsCourse(state, course.id));
-  const completions = useAppSelector((state: RootState) => getTimesCompletedCourse(state, course.id));
-  const duration = useAppSelector((state: RootState) => getCourseDurationFromLessons(state, course.id));
+  
+  const { attendances, completions, duration } = useCourse({ courseId: course.id });
+  
   return (
     <TableRow
       key={`${course.id}${course.name}`}
@@ -38,9 +37,11 @@ const CourseRow = ({ course, isSelected, onSelectionChange }: CourseRowProps) =>
 }
 
 export const CoursesList = ({ courses, selectedCourse }: Props) => {
+  
   const dispatch = useAppDispatch();
 
-  const coursesDict = useAppSelector((state: RootState) => state.course.entities);
+  const { coursesDict } = useCourses();
+
   const coursesArray = Object.values(coursesDict || {});
   const validCourses = coursesArray.filter(Boolean);
 

@@ -15,7 +15,7 @@ export const ColumnLayout = ({ children, layout = 'main' }: Props) => {
       direction="column"
       height="100%"
       justifyContent="center"
-      spacing={0}
+      spacing={ 0 }
       width="100%"
     >
       { children }

@@ -53,6 +53,21 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* Trainning tracker styles */
+
 .card {
   background-color: aliceblue;
   margin: 1rem;
@@ -64,6 +79,10 @@ button:focus-visible {
 
 .column-section--secondary {
   background: linear-gradient(45deg, #fff0e0, #fff);
+}
+
+.column-section {
+  padding-bottom: 70px;
 }
 
 .column-section  > .column-section {
@@ -85,17 +104,4 @@ button:focus-visible {
 
 .column-section > .column.section > .column-section > * {
   max-width: 100%;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }
