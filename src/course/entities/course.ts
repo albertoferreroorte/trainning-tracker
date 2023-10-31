@@ -1,6 +1,5 @@
 export class Course {
   completedLessonIds: number[];
-  completionCount: number = 0;
   courseLessonIds: number[];
   duration: number;
   id: number;
