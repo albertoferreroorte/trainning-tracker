@@ -2,14 +2,16 @@ import { Button, Grid, TextField } from '@mui/material';
 import { useForm } from '../../shared/hooks';
 import { CourseFormData } from '../entities';
 
+interface Props {
+  onAddCourse: (name: string, objectives: string) => void;
+}
+
 const initialForm: CourseFormData = {
   name: '',
   objectives: '',
 };
 
-export const AddCourseForm: React.FC<{
-  onAddCourse: (name: string, objectives: string) => void,
-}> = ({ onAddCourse }) => {
+export const AddCourseForm = ({ onAddCourse }: Props) => {
 
   const { formState: { name = '', objectives = '' }, onInputChange } = useForm(initialForm);
 

@@ -2,7 +2,12 @@ import { IconButton, List, ListItem, ListItemText } from '@mui/material';
 import { DeleteOutline } from '@mui/icons-material';
 import { Lesson } from '../entities';
 
-export const LessonsList: React.FC<{ onDeleteLesson: (id: number) => void, lessons: Lesson[] }>= ({ onDeleteLesson, lessons }) => {
+interface Props {
+  lessons: Lesson[];
+  onDeleteLesson: (id: number) => void;
+}
+
+export const LessonsList = ({ onDeleteLesson, lessons }: Props) => {
   const handleDeleteLesson = (_e: React.MouseEvent<HTMLButtonElement>, id: number) => {
     onDeleteLesson(id);
   };

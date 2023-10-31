@@ -5,14 +5,21 @@ import { Course, Lesson } from '../../course';
 import { useForm } from '../../shared/hooks';
 import { LessonsList } from './lessons-list';
 
-export const EditCourseForm: React.FC<{
-  courses: Course[],
-  lessons: Lesson[],
-  onAddLesson: (lesson: Lesson) => void,
-  onDeleteLesson: (id: number) => void,
-  onEditCourse: (course: Partial<Course>) => void,
-  selectedCourse: Course | null,
-}> = ({ lessons, onAddLesson, onDeleteLesson, onEditCourse, selectedCourse }) => {
+interface Props {
+  courses: Course[];
+  lessons: Lesson[];
+  onAddLesson: (lesson: Lesson) => void;
+  onDeleteLesson: (id: number) => void;
+  onEditCourse: (course: Partial<Course>) => void;
+  selectedCourse: Course | null;
+}
+export const EditCourseForm = ({
+  lessons,
+  onAddLesson,
+  onDeleteLesson,
+  onEditCourse,
+  selectedCourse,
+}: Props ) => {
 
   const { formState, setFormState, onInputChange } = useForm({ ...selectedCourse });
 

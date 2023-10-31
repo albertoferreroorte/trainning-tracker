@@ -11,7 +11,12 @@ interface CourseRowProps {
   onSelectionChange: (id: number) => void;
 }
 
-const CourseRow: React.FC<CourseRowProps> = ({ course, isSelected, onSelectionChange }) => {
+interface Props {
+  courses: Course[];
+  selectedCourse: Course | null;
+}
+
+const CourseRow = ({ course, isSelected, onSelectionChange }: CourseRowProps) => {
   const attendances = useAppSelector((state: RootState) => getNumberOfStudentsCourse(state, course.id));
   const completions = useAppSelector((state: RootState) => getTimesCompletedCourse(state, course.id));
   const duration = useAppSelector((state: RootState) => getCourseDurationFromLessons(state, course.id));
@@ -32,7 +37,7 @@ const CourseRow: React.FC<CourseRowProps> = ({ course, isSelected, onSelectionCh
   );
 }
 
-export const CoursesList: React.FC<{ courses: Course[], selectedCourse: Course | null }> = ({ courses, selectedCourse }) => {
+export const CoursesList = ({ courses, selectedCourse }: Props) => {
   const dispatch = useAppDispatch();
 
   const coursesDict = useAppSelector((state: RootState) => state.course.entities);
@@ -48,7 +53,7 @@ export const CoursesList: React.FC<{ courses: Course[], selectedCourse: Course |
   const isSelected = (id: string) => selectedCourse?.id.toLocaleString() === id;
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={ Paper }>
       <Table sx={{ minWidth: 650 }} aria-label="courses list table">
         <TableHead>
           <TableRow>
@@ -63,7 +68,7 @@ export const CoursesList: React.FC<{ courses: Course[], selectedCourse: Course |
         <TableBody>
           {
             validCourses.map((course) => course
-              ? (
+              && (
                 <CourseRow 
                   key={ course?.id } 
                   course={ course } 
@@ -71,7 +76,6 @@ export const CoursesList: React.FC<{ courses: Course[], selectedCourse: Course |
                   onSelectionChange={ handleSelectionChange }
                 />
               )
-              : ('')
             )
           }
         </TableBody>

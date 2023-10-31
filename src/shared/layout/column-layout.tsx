@@ -10,7 +10,7 @@ export const ColumnLayout = ({ children, layout = 'main' }: Props) => {
   return (
     <Grid
       alignItems="center"
-      className={ `column-section ${ layout && 'column-section--layout' }` }
+      className={ `column-section ${ layout && `column-section--${ layout }` }` }
       container
       direction="column"
       height="100%"
