@@ -1,7 +1,7 @@
 import { Dispatch, Update } from '@reduxjs/toolkit';
 import { Course, Lesson } from '../../course';
 import { RootState } from '../store';
-import { addCourse, addLessonToCourse, deleteCourse, selectCourse, updateCourse } from './course-slice';
+import { addCourse, addLessonToCourse, deleteCourse, deleteLessonFromCourse, selectCourse, updateCourse } from './course-slice';
 
 export const startAddNewCourse = (course: Course) => {
   return (dispatch: Dispatch) => {
@@ -30,6 +30,18 @@ export const startAddLessonToCourse = (courseId: number, newLesson: Lesson, exis
 export const startDeleteCourse = (id: number) => {
   return (dispatch: Dispatch) => {
     dispatch(deleteCourse(id));
+  };
+};
+
+export const startDeleteLessonFromCourse = (
+  courseId: number,
+  lessonId: number
+) => {
+  return (dispatch: Dispatch, getState: () => RootState) => {
+    const course = getState().course.entities[courseId];
+    if (course) {
+      dispatch(deleteLessonFromCourse({ courseId, lessonId }));
+    }
   };
 };
 

@@ -1,6 +1,6 @@
 import { Box, Button, Card, CardContent, CardHeader, Typography } from '@mui/material';
 import { useAppDispatch, useCourses, useLessons } from '../../shared/hooks';
-import { startAddLessonToCourse, startDeleteCourse, startUpdateCourse } from '../../store/course';
+import { startAddLessonToCourse, startDeleteCourse, startDeleteLessonFromCourse, startUpdateCourse } from '../../store/course';
 import { startAddNewLesson, startDeleteLesson } from '../../store/lesson';
 import { Course, Lesson } from '../entities';
 import { EditCourseForm } from '../components';
@@ -16,10 +16,7 @@ export const EditCourseView = () => {
   const { lessons } = useLessons( selectedCourse?.id ?? 0 );
 
   const handleSaveClick = (course: Partial<Course>) => {
-    const updatedCourse = courses.find(course => course.id === selectedCourse?.id);
-    if (updatedCourse) {
-      dispatch( startUpdateCourse({ ...course, ...updatedCourse }) );
-    }
+    dispatch( startUpdateCourse(course) );
   };
 
   const handleAddLesson = (lesson: Lesson) => {
@@ -35,7 +32,9 @@ export const EditCourseView = () => {
 
   const handleDeleteLesson = (id: number) => {
     dispatch( startDeleteLesson(id) );
+    dispatch( startDeleteLessonFromCourse(selectedCourse?.id ?? 0, id) );
   };
+
   return (
     <Box sx={{ display: 'flex', flexGrow: 1, p: { lg: '100px' }, marginTop: 7, maxWidth: {  lg: 800 }, width: 'calc( 100% - 200px)' }}>
       {

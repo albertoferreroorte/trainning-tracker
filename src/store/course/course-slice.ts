@@ -27,6 +27,16 @@ export const courseSlice = createSlice({
         }
       },
       deleteCourse: courseAdapter.removeOne,
+      deleteLessonFromCourse: (state, action: PayloadAction<{ courseId: number; lessonId: number }>) => {
+        const { courseId, lessonId } = action.payload;
+        const course = state.entities[courseId];
+        if (course) {
+          const lessonIndex = course.courseLessonIds.indexOf(lessonId);
+          if (lessonIndex !== -1) {
+            course.courseLessonIds.splice(lessonIndex, 1);
+          }
+        }
+      },
       updateCourse: courseAdapter.updateOne,
       selectCourse: (state, action: PayloadAction<number>) => {
         state.selectedCourseId = action.payload;
@@ -38,6 +48,7 @@ export const {
   addCourse,
   addLessonToCourse,
   deleteCourse,
+  deleteLessonFromCourse,
   selectCourse,
   updateCourse,
 } = courseSlice.actions;
