@@ -20,7 +20,6 @@ export const useStudents = () => {
 
   const studentsWithDetails = useAppSelector(selectStudentsWithCoursesAndCompletedLessons);
 
-
   return {
     selectedStudentCourse,
     selectedStudentCourseId,
@@ -33,10 +32,14 @@ export const useStudents = () => {
   };
 }
 
-export const useSelectedStudent = (studentId: number ) => {
+export const useSelectedStudent = (studentId: number) => {
+  
   const coursesForStudent = useAppSelector(state => selectCoursesForStudent(state, studentId));
+  
   const studentCourseCompletedLessons = useAppSelector(state => selectStudentCourseCompletedLessons(state, studentId));
+  
   const selectedStudent = useAppSelector(state => selectStudentById(state, studentId ));
+  
   return {
     coursesForStudent,
     studentCourseCompletedLessons,

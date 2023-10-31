@@ -7,16 +7,6 @@ export const StudentsPage = () => {
     <ColumnLayout layout="secondary">
       <AddStudentView />
       <ColumnLayout>
-        {
-          /* <Provider value={{
-            courses,
-            lessons,
-            selectedLessonIds: completedLessons.map(lesson => lesson.id) || [],
-            selectedStudent,
-            selectedStudentCourseId: selectedStudentCourseId || 0,
-            students,
-          }}> */
-        }
         <StudentsView />
         <ColumnLayout>
           <EditStudentView />

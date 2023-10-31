@@ -56,7 +56,11 @@ export const EditStudentView = () => {
                 </Button>
               }
               sx={{ paddingBottom: 0 }}
-              title={ <Typography variant="h2" component='h4'>{ selectedStudent?.fullName }</Typography> }
+              title={
+                <Typography variant="h2" component='h4'>
+                  { selectedStudent?.fullName }
+                </Typography>
+              }
               subheader={ selectedStudent?.jobPosition }
             />
             <CardContent sx={{ marginTop: 1, paddingTop: 0 }}>

@@ -8,5 +8,11 @@ export const useCourses = () => {
   const selectedCourse = useAppSelector(state => selectedCourseId !== null ? selectCourseById(state, selectedCourseId): undefined);
   const courseLessons = useAppSelector(state => state.student.studentCourses[selectedCourseId ?? 0]);
 
-  return { courses, courseLessonIds, courseLessons, selectedCourse, selectedCourseId };
+  return {
+    courses,
+    courseLessonIds,
+    courseLessons,
+    selectedCourse,
+    selectedCourseId,
+  };
 }
