@@ -1,5 +1,4 @@
-import { TimelineOutlined } from '@mui/icons-material';
-import { Button, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { TabsComponent } from './tabs';
 
 export const HeaderComponent = () => {
@@ -14,17 +13,9 @@ export const HeaderComponent = () => {
       sx={{ backgroundColor: 'white' }}
       zIndex={ 2 }
     >
-      <Typography fontSize='large' fontFamily='Oswald' sx={{ mx: 3 }}>Trainning tracker</Typography>
+      <Typography fontSize='large' fontFamily='Oswald' sx={{ mx: 3 }}>Trainning ...</Typography>
       <TabsComponent />
-      <Button
-        aria-label="overview"
-        color="primary"
-        variant="outlined"
-        startIcon={<TimelineOutlined fontSize='large' />}
-        sx={{ mx: 3 }}
-      >
-        Tracking grid
-      </Button>
+      <Typography fontSize='large' fontFamily='Oswald' sx={{ mx: 3 }}>... Tracker</Typography>
     </Grid>
   );
 }

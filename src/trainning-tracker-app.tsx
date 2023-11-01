@@ -1,7 +1,8 @@
 import { ThemeProvider } from '@mui/material';
 import { AppRouter } from './router';
 import { useTheme } from './shared/hooks';
-import { HeaderComponent, MainLayoutComponent } from './shared/components';
+import { HeaderComponent } from './shared/components';
+import { MainLayoutComponent } from './shared/layout';
 
 export const TrainningTrackerApp = () => {
 

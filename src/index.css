@@ -81,6 +81,10 @@ button:focus-visible {
   background: linear-gradient(45deg, #fff0e0, #fff);
 }
 
+.column-section--tertiary {
+  background: linear-gradient(45deg, rgba(25, 118, 210, 0.4), rgba(25, 118, 210, 0.2));
+}
+
 .column-section {
   padding-bottom: 70px;
 }

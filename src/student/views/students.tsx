@@ -1,8 +1,9 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { StudentsList } from '../components';
 import { useAppDispatch, useSelectedStudent, useStudents } from '../../shared/hooks';
 import { Student } from '../entities';
 import { startSelectStudent } from '../../store/student';
+import { SectionTitleComponent } from '../../shared/components';
 
 export const StudentsView = () => {
 
@@ -17,18 +18,10 @@ export const StudentsView = () => {
 
   return (
     <Box sx={{ p: { md: 3 }, my: 7 }}>
-      <Typography
-        component='h3'
-        variant="h2"
-        sx={{ my: 3 }}
-      >
-        {
-          !students?.length && (
-            <Typography fontSize={ 30 } sx={{ mr: 3, opacity: 0.75 }}>No</Typography>
-          )
-        }
-        Students
-      </Typography>
+      <SectionTitleComponent
+        length={ students.length }
+        name='Students'
+      />
       {
         students?.length > 0 && (
           <StudentsList

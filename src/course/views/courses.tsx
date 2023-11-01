@@ -1,6 +1,7 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { CoursesList } from '../components';
 import { useCourses } from '../../shared/hooks';
+import { SectionTitleComponent } from '../../shared/components';
 
 export const CoursesView = () => {
 
@@ -8,18 +9,10 @@ export const CoursesView = () => {
   
   return (
     <Box sx={{ p: { md: 3 }, my: 7 }}>
-      <Typography
-        component='h3'
-        variant="h2"
-        sx={{ my: 3 }}
-      >
-        {
-          !courses.length ? (
-            <Typography fontSize={ 30 } sx={{ mr: 3, opacity: 0.75 }}>No</Typography>
-          ) : ''
-        }
-        Courses
-      </Typography>
+      <SectionTitleComponent
+        length={ courses.length }
+        name='Courses'
+      />
       {
         courses.length ? (
           <CoursesList

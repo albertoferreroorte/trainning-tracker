@@ -23,6 +23,7 @@ export const TabsComponent = () => {
     >
       <Tab label="Courses" component={ Link } to="/courses" />
       <Tab label="Students" component={ Link } to="/students" />
+      <Tab label="Tracking" component={ Link } to="/tracking" />
     </Tabs>
   );
 }

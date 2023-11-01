@@ -8,5 +8,10 @@ export const TABS = [
     label: 'Students',
     value: 1,
     path: '/students',
+  },
+  {
+    label: 'Tracking',
+    value: 2,
+    path: '/tracking',
   }
 ];
