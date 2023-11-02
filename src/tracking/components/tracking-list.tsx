@@ -38,7 +38,7 @@ export const TrackingListComponent = () => {
                 groupedTracks.map((track, index) => (
                   <Card
                     key={ `${ track.id }-${ index }` }
-                    sx={{ backgroundColor: 'rgba(255, 255, 255, 0.6)', display: 'flex', margin: 1, minWidth: 200, padding: 1 }}
+                    sx={{ display: 'flex', margin: 1, minWidth: 200, padding: 1 }}
                   >
                     <CardContent>
                       <Typography variant="overline" display="block" gutterBottom>
