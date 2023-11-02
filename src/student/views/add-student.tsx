@@ -3,6 +3,7 @@ import { AddStudentForm } from '../components';
 import { useAppDispatch } from '../../shared/hooks';
 import { Student } from '../entities';
 import { startAddStudent } from '../../store/student';
+import { startAddStudentTrack } from '../../store/track';
 
 export const AddStudentView = () => {
 
@@ -11,6 +12,7 @@ export const AddStudentView = () => {
   const handleAddStudent = (name: string, position: string) => {
     const newStudent = new Student(name, position, []);
     dispatch( startAddStudent(newStudent) );
+    dispatch( startAddStudentTrack(name) );
   };
 
   return (

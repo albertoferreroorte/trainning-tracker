@@ -3,6 +3,7 @@ import { AddCourseForm } from '../components';
 import { useAppDispatch } from '../../shared/hooks';
 import { startAddNewCourse } from '../../store/course';
 import { Course } from '../entities';
+import { startAddCourseTrack } from '../../store/track';
 
 export const AddCourseView = () => {
 
@@ -10,6 +11,7 @@ export const AddCourseView = () => {
 
   const handleAddCourse = (name: string, objectives: string) => {
     dispatch( startAddNewCourse(new Course(name, objectives)) );
+    dispatch( startAddCourseTrack(name) );
   };
 
   return (

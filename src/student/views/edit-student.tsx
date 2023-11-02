@@ -5,6 +5,7 @@ import { EditStudentForm } from '../components';
 import { useAppDispatch, useCourses, useSelectedStudent, useStudents } from '../../shared/hooks';
 import { startDeleteStudent, startSelectStudentCourse, startSelectStudentLessons, startSetStudentCourseLessons, startUpdateStudent } from '../../store/student';
 import { Student } from '../entities';
+import { startAddProgressTrack, startAddStudentCourseTrack, startDeleteStudentTrack, startEditStudentTrack } from '../../store/track/thunks';
 
 export const EditStudentView = () => {
 
@@ -16,22 +17,26 @@ export const EditStudentView = () => {
  
   const handleDeleteStudent = () => {
     if (!selectedStudent?.id) return;
+    dispatch( startDeleteStudentTrack(selectedStudent.fullName) );
     dispatch( startDeleteStudent(selectedStudent.id) );
   };
 
   const handleSaveStudent = (student: Partial<Student>) => {
     if (selectedStudentCourseId && selectedStudent?.id && student.id) {
       dispatch( startUpdateStudent(selectedStudent.id, selectedStudentCourseId) );
+      dispatch( startEditStudentTrack(selectedStudent.fullName) )
     }
   };
   
   const handleSelectCourse = (course: number) => {
     dispatch( startSelectStudentCourse(course) );
+    dispatch( startAddStudentCourseTrack(course) );
   }
 
   const handleSelectLessonIds = (lessonIds: number[]) => {
     if (!selectedStudentCourseId || !selectedStudent?.id) return;
     dispatch( startSelectStudentLessons(selectedStudentCourseId, lessonIds, selectedStudent.id) );
+    dispatch( startAddProgressTrack(selectedStudentCourseId, lessonIds, selectedStudent.id) );
   }
 
   const handleSetLessons = (lessons: number[]) => {

@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import { ProjectDescriptionComponent } from '../../shared/components';
 import { ColumnLayout } from '../../shared/layout/column-layout';
 import { TrackingListComponent } from '../components';
@@ -8,7 +9,9 @@ export const TrackingPage = () => {
       <ColumnLayout layout="tertiary">
         <TrackingListComponent />
       </ColumnLayout>
-      <ProjectDescriptionComponent />
+      <Box marginBottom={ 10 }>
+        <ProjectDescriptionComponent />
+      </Box>
     </>
   );
 }

@@ -2,7 +2,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { Student } from '../../student/entities';
 import { isValidLessonForCourse } from '../selectors';
 import { RootState } from '../store';
-import { addStudent, deleteStudent, selectStudentCourse, selectStudentId, selectStudentLessons, setStudentCourseCompletedLessons, setStudentCourseLessons, updateStudent } from './studentSlice';
+import { addStudent, deleteStudent, selectStudentCourse, selectStudentId, selectStudentLessons, setStudentCourseCompletedLessons, setStudentCourseLessons, updateStudent } from './student-slice';
 
 export const startAddStudent = (student: Student) => {
   return ( dispatch: Dispatch ) => {

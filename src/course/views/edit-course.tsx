@@ -6,6 +6,7 @@ import { Course, Lesson } from '../entities';
 import { EditCourseForm } from '../components';
 import { PersonOutline } from '@mui/icons-material';
 import { format, parseISO } from 'date-fns';
+import { startAddLessonTrack, startDeleteCourseTrack, startDeleteLessonTrack, startEditCourseTrack } from '../../store/track';
 
 export const EditCourseView = () => {
 
@@ -17,20 +18,25 @@ export const EditCourseView = () => {
 
   const handleSaveClick = (course: Partial<Course>) => {
     dispatch( startUpdateCourse(course) );
+    if (!course.name) return;
+    dispatch( startEditCourseTrack(course.name) );
   };
 
   const handleAddLesson = (lesson: Lesson) => {
     dispatch( startAddNewLesson(lesson) );
     dispatch( startAddLessonToCourse(selectedCourse?.id ?? 0, lesson, courseLessonIds) );
+    dispatch( startAddLessonTrack(lesson.title) );
   };
 
   const handleDeleteClick = () => {
     if (selectedCourse?.id) {
+      dispatch( startDeleteCourseTrack(selectedCourse.name) );
       dispatch( startDeleteCourse(selectedCourse.id) );
     }
   };
 
   const handleDeleteLesson = (id: number) => {
+    dispatch( startDeleteLessonTrack(id) );
     dispatch( startDeleteLesson(id) );
     dispatch( startDeleteLessonFromCourse(selectedCourse?.id ?? 0, id) );
   };

@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { courseSlice } from './course/course-slice';
 import { lessonSlice } from './lesson';
 import { studentSlice } from './student';
+import { trackSlice } from './track/track-slice';
 
 export const store = configureStore({
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
@@ -11,6 +12,7 @@ export const store = configureStore({
     course: courseSlice.reducer,
     lesson: lessonSlice.reducer,
     student: studentSlice.reducer,
+    track: trackSlice.reducer,
   },
 });
 
