@@ -1,4 +1,4 @@
-type TrackAction = 'Created' | 'Edited' | 'Removed' | 'Progress' | 'Started';
+export type TrackAction = 'All' | 'Created' | 'Edited' | 'Progress' | 'Removed' | 'Started';
 
 type TrackTarget = 'Course' | 'Lesson' | 'Student';
 
